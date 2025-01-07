@@ -117,14 +117,8 @@ const setHighLight = (options) => {
   if (!decorationsCollection) {
     return
   }
-  const decorationOptions = [{
-    range: new monaco.Range(1, 1, 1, 5),
-    options: {
-      isWholeLine: true,
-      className: 'highlight-error-line'
-    }
-  }, {
-    range: new monaco.Range(3, 1, 3, 5),
+  const decorationOptions = [ {
+    range: new monaco.Range(5, 1, 5, 1),
     options: {
       isWholeLine: true,
       className: 'highlight-error-line'
@@ -238,6 +232,7 @@ const runCode = () => {
       1 error generated.
     </code>
   </pre>`
+  setHighLight()
   typingEffect()
 }
 // 模拟逐字打字效果
