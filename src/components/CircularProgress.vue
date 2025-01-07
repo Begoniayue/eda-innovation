@@ -60,7 +60,7 @@ watch(() => props.progress, (newProgress) => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: conic-gradient(#0f0 0deg, #e6e6e6 0deg); /* 默认空白 */
+  background: conic-gradient(#27dcad 0deg, #00abf1 0deg); /* 默认空白 */
   transition: background 0.3s ease;
 }
 

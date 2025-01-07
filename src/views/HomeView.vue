@@ -175,7 +175,21 @@ init()
     <div class="title">
       <div class="progress-container">
         <!-- 环形进度条 -->
-        <CircularProgress :progress="68"/>
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="68"/>
+        </div>
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="68"/>
+        </div>
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="68"/>
+        </div>
       </div>
     </div>
 
@@ -295,15 +309,13 @@ init()
     font-size: 24px;
     font-weight: bold;
     text-transform: uppercase;
-    color: #4CAF50;
+    color: #ffffff;
     padding: 10px 30px;
     margin: 0 20px;
-    background: linear-gradient(145deg, #a8e063, #56ab2f); /* 渐变背景 */
+    background: linear-gradient(#0e143f 20%, #fff); /* 渐变背景 */
     border-radius: 30px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 阴影效果 */
     text-align: center;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", sans-serif;
-
   }
 
   .placeholder {
@@ -330,7 +342,7 @@ init()
 
 .progress-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
 }
 
