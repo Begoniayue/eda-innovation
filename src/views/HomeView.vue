@@ -10,8 +10,8 @@ let answerEditor = null
 let questionEditor = null
 let decorationsCollection = null
 
-const questionLanguage = ref('javascript')
-const answerLanguage = ref('javascript')
+const questionLanguage = ref('python')
+const answerLanguage = ref('python')
 
 // 初始代码
 const initialCode = {
@@ -133,19 +133,31 @@ watch(answerLanguage, (value) => {
 })
 init()
 
-//
+ ///
 
+// 控制台日志数组
 const logs = ref([])
 
 // 用户输入的消息
 const inputMessage = ref('')
 
-// 添加日志到控制台
+// 选中的日志
+const selectedLog = ref(null)
+
+// 添加日志到左侧的日志列表
 const logMessage = () => {
   if (inputMessage.value) {
     logs.value.push({
-      type: 'info', // 默认信息类型
-      message: inputMessage.value
+      type: 'info',
+      message: 'Info: Page loaded successfully!'
+    })
+    logs.value.push({
+      type: 'warning',
+      message: 'Warning: Your session will expire soon.'
+    })
+    logs.value.push({
+      type: 'error',
+      message: 'Error: Something went wrong.'
     })
     inputMessage.value = '' // 清空输入框
   }
@@ -166,11 +178,6 @@ setInterval(() => {
     message: 'Error: Something went wrong.'
   })
 }, 5000) // 每隔5秒输出日志
-
-
-
-
-
 </script>
 
 <template>
@@ -220,26 +227,33 @@ setInterval(() => {
         <svg t="1736214690658" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2516" width="20" height="20"><path d="M396.5 661.9V110c0-6.1 7.5-9 11.6-4.6l366.6 394.3c2.4 2.6 2.4 6.6 0 9.1L408.1 903.2c-4.1 4.5-11.6 1.5-11.6-4.6V661.9z" fill="#67B47A" p-id="2517"></path></svg>
         run
       </div>
-      <div class="button-item">
-        <svg t="1736214728261" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3688" width="20" height="20"><path d="M715.872 473.392c-15.472-112.736-103.616-196.864-207.36-196.864-103.68 0-191.872 84.064-207.344 196.864h414.72z m-463.072 0l0.192-1.712c16.72-138.08 125.376-243.152 255.52-243.152 130.752 0 239.728 105.984 255.744 244.864h45.488a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H208a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h44.8z m486.656 117.92c13.888 3.472 12.352 13.472 10.912 18.208-34.8 113.696-131.088 192.912-242.08 192.912-110.144 0-205.856-78.016-241.312-190.432-1.536-4.896-4.64-14.432 10.832-18.848l16.528-4.32c15.52-3.968 17.392 5.52 18.864 10.096 29.728 92.56 107.376 155.504 195.088 155.504 88 0 165.824-63.36 195.36-156.304 1.536-4.864 3.616-14.88 19.936-10.832l15.872 4.032z m54.624 84.16h16a16 16 0 0 1 16 16v125.568a16 16 0 0 1-16 16h-125.552a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h93.552v-93.568a16 16 0 0 1 16-16z m-570.08 0a16 16 0 0 1 16 16v93.568h93.568a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H208a16 16 0 0 1-16-16v-125.568a16 16 0 0 1 16-16h16z m570.08-325.92a16 16 0 0 1-16-16V240h-93.552a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h125.552a16 16 0 0 1 16 16v125.568a16 16 0 0 1-16 16h-16z m-570.08 0h-16a16 16 0 0 1-16-16V208a16 16 0 0 1 16-16h125.568a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H240v93.568a16 16 0 0 1-16 16zM591.168 648.32c10.224 11.68 1.04 18.976-3.84 21.648-21.648 11.824-49.536 18.384-78.96 18.384-28.912 0-56.368-6.336-77.872-17.792-5.12-2.736-14.08-9.36-4.32-22.336l10.528-14.016c7.824-11.088 16.048-5.984 20.736-3.84 13.648 6.224 31.584 9.984 50.928 9.984 18.928 0 36.496-3.6 50-9.568 5.168-2.288 12.512-7.664 22.816 4.384l9.984 13.152z" fill="#000000" p-id="3689"></path></svg>
-        test
-      </div>
     </div>
     <div class="console-container">
-      <!-- 控制台头部 -->
-      <div class="console-header">Test Console Output</div>
-
-      <!-- 控制台输出区域 -->
-      <div class="console-output">
-        <div v-for="(log, index) in logs" :key="index" :class="log.type">
-          {{ log.message }}
+      <!-- 左侧输入区域 -->
+      <div class="console-input-section">
+        <div class="console-header" style="display: flex;justify-content: space-between;align-items: center">
+          Input Log
+          <div class="button-item console-button" @click="logMessage">
+            <svg t="1736214728261" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3688" width="28" height="28"><path d="M715.872 473.392c-15.472-112.736-103.616-196.864-207.36-196.864-103.68 0-191.872 84.064-207.344 196.864h414.72z m-463.072 0l0.192-1.712c16.72-138.08 125.376-243.152 255.52-243.152 130.752 0 239.728 105.984 255.744 244.864h45.488a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H208a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h44.8z m486.656 117.92c13.888 3.472 12.352 13.472 10.912 18.208-34.8 113.696-131.088 192.912-242.08 192.912-110.144 0-205.856-78.016-241.312-190.432-1.536-4.896-4.64-14.432 10.832-18.848l16.528-4.32c15.52-3.968 17.392 5.52 18.864 10.096 29.728 92.56 107.376 155.504 195.088 155.504 88 0 165.824-63.36 195.36-156.304 1.536-4.864 3.616-14.88 19.936-10.832l15.872 4.032z m54.624 84.16h16a16 16 0 0 1 16 16v125.568a16 16 0 0 1-16 16h-125.552a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h93.552v-93.568a16 16 0 0 1 16-16z m-570.08 0a16 16 0 0 1 16 16v93.568h93.568a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H208a16 16 0 0 1-16-16v-125.568a16 16 0 0 1 16-16h16z m570.08-325.92a16 16 0 0 1-16-16V240h-93.552a16 16 0 0 1-16-16v-16a16 16 0 0 1 16-16h125.552a16 16 0 0 1 16 16v125.568a16 16 0 0 1-16 16h-16z m-570.08 0h-16a16 16 0 0 1-16-16V208a16 16 0 0 1 16-16h125.568a16 16 0 0 1 16 16v16a16 16 0 0 1-16 16H240v93.568a16 16 0 0 1-16 16zM591.168 648.32c10.224 11.68 1.04 18.976-3.84 21.648-21.648 11.824-49.536 18.384-78.96 18.384-28.912 0-56.368-6.336-77.872-17.792-5.12-2.736-14.08-9.36-4.32-22.336l10.528-14.016c7.824-11.088 16.048-5.984 20.736-3.84 13.648 6.224 31.584 9.984 50.928 9.984 18.928 0 36.496-3.6 50-9.568 5.168-2.288 12.512-7.664 22.816 4.384l9.984 13.152z" fill="#fff" p-id="3689"></path></svg>
+            Test
+          </div>
+        </div>
+        <div class="console-input-container">
+          <input v-model="inputMessage" type="text" placeholder="Enter log message..." />
         </div>
       </div>
 
-      <!-- 控制台输入框 -->
-      <div class="console-input-container">
-        <input v-model="inputMessage" type="text" placeholder="Enter log message..." />
-        <button @click="logMessage">Log</button>
+      <!-- 右侧输出区域 -->
+      <div class="console-output-section">
+        <div class="console-header">Console Output</div>
+        <div class="console-output">
+          <div v-if="logs.length>0">
+            <div v-for="(log, index) in logs" :key="index" :class="log.type">
+              {{ log.message }}
+            </div>
+          </div>
+          <div v-else class="no-log">Select a log to see details...</div>
+        </div>
       </div>
     </div>
     <div class="title">
@@ -253,7 +267,7 @@ setInterval(() => {
         <div class="progress-item">
           <div class="title">功能覆盖率</div>
           <div class="desc">code coverage</div>
-          <CircularProgress :progress="68"/>
+          <CircularProgress :progress="88"/>
         </div>
         <div class="progress-item">
           <div class="title">功能覆盖率</div>
@@ -262,7 +276,6 @@ setInterval(() => {
         </div>
       </div>
     </div>
-
   </div>
 
 </template>
@@ -381,9 +394,8 @@ setInterval(() => {
     text-transform: uppercase;
     color: #ffffff;
     padding: 10px 30px;
-    margin: 0 20px;
-    background: linear-gradient(#0e143f 20%, #fff); /* 渐变背景 */
-    border-radius: 30px;
+    //margin: 0 20px;
+    //background: linear-gradient(#0e143f 20%, #5b5959); /* 渐变背景 */
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* 阴影效果 */
     text-align: center;
   }
@@ -414,6 +426,11 @@ setInterval(() => {
   display: flex;
   justify-content: space-around;
   align-items: center;
+  .progress-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
 }
 .button-container{
   display: flex;
@@ -432,31 +449,53 @@ setInterval(() => {
 
 //
 .console-container {
-  width: 80%;
+  display: flex;
+  width: 100%;
   height: 400px;
   margin: 20px auto;
   background-color: #1e1e1e;
   color: #fff;
   border-radius: 8px;
-  overflow: hidden;
+}
+
+.console-input-section {
+  width: 50%;
+  padding: 10px;
+  background-color: #333;
+  display: flex;
+  flex-direction: column;
+}
+
+.console-output-section {
+  width: 50%;
+  padding: 10px;
+  background-color: #222;
+  color: #fff;
   display: flex;
   flex-direction: column;
 }
 
 .console-header {
   padding: 10px;
-  background-color: #333;
+  background-color: #444;
   text-align: center;
   font-weight: bold;
 }
 
-.console-output {
+.log-list {
   flex-grow: 1;
-  padding: 10px;
   overflow-y: auto;
-  font-family: 'Courier New', monospace;
-  font-size: 14px;
-  background-color: #222;
+  margin-bottom: 10px;
+}
+
+.log-item {
+  padding: 8px;
+  cursor: pointer;
+  border-bottom: 1px solid #444;
+}
+
+.log-item:hover {
+  background-color: #555;
 }
 
 .console-input-container {
@@ -469,10 +508,13 @@ input {
   flex-grow: 1;
   padding: 8px;
   font-size: 14px;
-  border: 1px solid #444;
+  border: none;
   border-radius: 4px;
   color: #fff;
   background-color: #333;
+  &:focus {
+    outline: none;
+  }
 }
 
 button {
@@ -489,6 +531,22 @@ button:hover {
   background-color: #66b1ff;
 }
 
+.console-output {
+  flex-grow: 1;
+  padding: 10px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  background-color: #222;
+  overflow-y: auto;
+}
+
+.log-detail {
+  color: #7ec8e3;
+}
+
+.no-log {
+  color: #888;
+}
 /* 不同类型的日志 */
 .info {
   color: #7ec8e3;
@@ -501,5 +559,44 @@ button:hover {
 .error {
   color: #f87171;
 }
+.console-button{
+  color: #ffffff;
+  line-height: 20px;
+  background: #0071e3;
+  border-radius: 25px;
+  padding: 5px 20px;
+  .icon{
+    display: inline-block;
+  }
+}
+.button-item{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+/* 自定义滚动条样式 */
+.log-list, .console-output {
+  scrollbar-width: thin;
+  scrollbar-color: #ddd #333; /* 滚动条轨道颜色 #333 背景，滑块颜色 #409eff */
+}
 
+.log-list::-webkit-scrollbar, .console-output::-webkit-scrollbar {
+  width: 8px; /* 设置滚动条宽度 */
+}
+
+.log-list::-webkit-scrollbar-thumb, .console-output::-webkit-scrollbar-thumb {
+  background-color: #ddd; /* 滑块颜色 */
+  border-radius: 8px;
+  border: 2px solid #333; /* 滑块的边框颜色 */
+}
+
+.log-list::-webkit-scrollbar-track, .console-output::-webkit-scrollbar-track {
+  background-color: #333; /* 滚动条轨道背景颜色 */
+  border-radius: 8px;
+}
+
+.log-list::-webkit-scrollbar-thumb:hover, .console-output::-webkit-scrollbar-thumb:hover {
+  background-color: #66b1ff; /* 鼠标悬停时的滑块颜色 */
+}
 </style>

@@ -17,7 +17,7 @@ watch(() => props.progress, (newProgress) => {
   const progress = newProgress < 0 ? 0 : newProgress > 100 ? 100 : newProgress
   const degree = (progress / 100) * 360
   progressStyle.value = {
-    background: `conic-gradient(#0f0 ${degree}deg, #e6e6e6 0deg)`
+    background: `conic-gradient(#4855a3 ${degree}deg, #000 0deg)`
   }
 }, {
   immediate: true
@@ -35,8 +35,8 @@ watch(() => props.progress, (newProgress) => {
 <style scoped lang="less">
 .progress-wrapper {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 180px;
+  height: 180px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -73,13 +73,13 @@ watch(() => props.progress, (newProgress) => {
 
 @keyframes glow {
   0% {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)) blur(5px);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2)) blur(5px);
   }
   50% {
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.8)) blur(8px);
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3)) blur(5px);
   }
   100% {
-    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5)) blur(5px);
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.2)) blur(5px);
   }
 }
 
