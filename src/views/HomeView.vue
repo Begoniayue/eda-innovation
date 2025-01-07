@@ -5,13 +5,10 @@ import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
 import hljs from 'highlight.js'
 
-const ref_questionEditorContainer = ref(null)
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
-let questionEditor = null
 let decorationsCollection = null
 
-const questionLanguage = ref('python')
 const answerLanguage = ref('python')
 
 // 初始代码
@@ -73,20 +70,8 @@ onMounted(() => {
     lineNumbers: 'on'
   })
 
-  questionEditor = monaco.editor.create(ref_questionEditorContainer?.value, {
-    value: initialCode[questionLanguage.value],
-    language: questionLanguage.value,
-    theme: 'vs-dark',
-    automaticLayout: true,
-    lineNumbers: 'on',
-    readOnly: true  // 设置右侧为只读模式
-  })
   decorationsCollection = answerEditor.createDecorationsCollection()
 })
-// 设置题目
-const setQuestion = (question) => {
-  questionEditor.setValue(question)
-}
 // 获取题目
 const getQuestion = async () => {
   try {
@@ -117,7 +102,7 @@ const setHighLight = (options) => {
   if (!decorationsCollection) {
     return
   }
-  const decorationOptions = [ {
+  const decorationOptions = [{
     range: new monaco.Range(5, 1, 5, 1),
     options: {
       isWholeLine: true,
@@ -131,14 +116,6 @@ const init = () => {
   getQuestion()
   setHighLightStyle()
 }
-watch(questionLanguage, async (value) => {
-  try {
-    const res = await getQuestion()
-    questionEditor.setModel(monaco.editor.createModel(initialCode[value], value))
-  } catch (e) {
-
-  }
-})
 watch(answerLanguage, (value) => {
   answerEditor.setModel(monaco.editor.createModel('', value))
 })
@@ -277,9 +254,23 @@ watch(displayedCode, () => {
       <div class="left">
         <div class="header">
           <h2>Spec Input:</h2>
-          <LanguageSelector v-model="questionLanguage" />
         </div>
-        <div ref="ref_questionEditorContainer" class="monaco-editor"></div>
+        <div style="background: #1e1e1e;border-radius: 15px;height: calc(100% - 44px)">
+          文字 图片 上传 富文本编辑器
+        </div>
+      </div>
+      <div class="right">
+        <div class="header">
+          <h2>Debug Log:</h2>
+        </div>
+        <div class="code-print">
+          <div class="code-light code-light-top">
+            <div v-html="err" style="color: red"></div>
+          </div>
+          <div class="code-light">
+            <highlightjs language="Xml" :code="displayedCode" />
+          </div>
+        </div>
       </div>
       <div class="middle">
         <div class="header">
@@ -297,17 +288,32 @@ watch(displayedCode, () => {
         </div>
         <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
       </div>
-      <div class="right">
-        <div class="right-header">
-          <h2>Debug Log:</h2>
+      <div class="item-4">
+        <div class="button">1</div>
+        <div class="button">2</div>
+        <div class="button">3</div>
+        <div class="button">4</div>
+        <div class="button">5</div>
+      </div>
+      <div class="item-5">
+        <div class="output-common">1</div>
+        <div class="output-common">2</div>
+      </div>
+      <div class="item-6">
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="68" />
         </div>
-        <div class="code-print">
-          <div class="code-light code-light-top">
-            <div v-html="err" style="color: red"></div>
-          </div>
-          <div class="code-light">
-            <highlightjs language="Xml" :code="displayedCode"/>
-          </div>
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="88" />
+        </div>
+        <div class="progress-item">
+          <div class="title">功能覆盖率</div>
+          <div class="desc">code coverage</div>
+          <CircularProgress :progress="68" />
         </div>
       </div>
     </div>
@@ -345,24 +351,6 @@ watch(displayedCode, () => {
       </div>
     </div>
     <div class="title">
-      <div class="progress-container">
-        <!-- 环形进度条 -->
-        <div class="progress-item">
-          <div class="title">功能覆盖率</div>
-          <div class="desc">code coverage</div>
-          <CircularProgress :progress="68" />
-        </div>
-        <div class="progress-item">
-          <div class="title">功能覆盖率</div>
-          <div class="desc">code coverage</div>
-          <CircularProgress :progress="88" />
-        </div>
-        <div class="progress-item">
-          <div class="title">功能覆盖率</div>
-          <div class="desc">code coverage</div>
-          <CircularProgress :progress="68" />
-        </div>
-      </div>
     </div>
   </div>
 
@@ -420,15 +408,15 @@ watch(displayedCode, () => {
 
   .main-content {
     display: grid;
-    min-height: 600px;
-    padding: 20px 20px 20px 20px;
-    grid-template-columns: 35% 35% 30%;
+    padding: 20px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows:700px 200px 500px;
+    grid-gap: 20px;
     margin-top: -115px;
 
     .left, .middle, .right {
       position: relative;
       flex: 1;
-      margin: 0 10px;
       display: flex;
       flex-direction: column;
 
@@ -438,6 +426,53 @@ watch(displayedCode, () => {
         font-weight: bold;
         color: #fff;
       }
+    }
+
+    .item-4 {
+      grid-column-start: 1;
+      grid-column-end: 3;
+      color: #FFFFFF;
+      border: 1px solid #fff;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+
+      .button {
+        border: 1px solid #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 16%;
+        height: 50%;
+      }
+    }
+
+    .item-5 {
+      grid-column-start: 3;
+      grid-column-end: 4;
+      grid-row-start: 2;
+      grid-row-end: 4;
+      color: #FFFFFF;
+      border: 1px solid #fff;
+
+      .output-common {
+        height: 50%;
+      }
+
+      .output-common:last-child {
+        border-top: 1px solid #fff;
+      }
+    }
+
+    .item-6 {
+      grid-column-start: 1;
+      grid-column-end: 3;
+      color: #FFFFFF;
+      border: 1px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+
     }
 
     .left {
@@ -461,7 +496,7 @@ watch(displayedCode, () => {
     .right {
       overflow: hidden;
 
-      .right-header {
+      .header {
         padding-left: 20px;
         width: 50%;
       }
@@ -509,32 +544,6 @@ watch(displayedCode, () => {
   }
 }
 
-.progress-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  .progress-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-}
-
-.button-container {
-  display: flex;
-  background: #ffffff;
-  justify-content: center;
-  font-size: 18px;
-  height: 32px;
-  line-height: 32px;
-
-  .button-item {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-}
 
 .run-btn {
   display: flex;
