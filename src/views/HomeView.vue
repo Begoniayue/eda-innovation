@@ -306,7 +306,7 @@ watch(displayedCode, () => {
            <div v-html="err" style="color: red"></div>
          </div>
          <div class="code-light">
-           <highlightjs language="Xml" :code="displayedCode">
+           <highlightjs class="code-light-content" language="Xml" :code="displayedCode">
            </highlightjs>
          </div>
        </div>
@@ -757,5 +757,42 @@ code {
 /* 竖向滚动条样式 */
 .code-print::-webkit-scrollbar-vertical {
   width: 8px;
+}
+.code-light-content {
+  background: none!important;
+}
+.code-light-content::-webkit-scrollbar {
+  width: 10px; /* 设置竖直滚动条宽度 */
+  height: 10px; /* 设置水平滚动条高度 */
+}
+
+/* 滚动条轨道（背景） */
+.code-light-content::-webkit-scrollbar-track {
+  background: #f0f0f0; /* 滚动条轨道背景 */
+  border-radius: 10px;
+}
+
+/* 滚动条滑块（可滑动部分） */
+.code-light-content::-webkit-scrollbar-thumb {
+  background: #888; /* 滚动条滑块的颜色 */
+  border-radius: 10px; /* 滚动条滑块的圆角 */
+}
+
+/* 滚动条滑块悬浮时的样式 */
+.code-light-content::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 滑块悬浮时的颜色 */
+}
+
+/* 横向滚动条样式 */
+.code-light-content::-webkit-scrollbar-horizontal {
+  height: 8px;
+}
+
+/* 竖向滚动条样式 */
+.code-light-content::-webkit-scrollbar-vertical {
+  width: 8px;
+}
+pre code.hljs{
+  display: contents;
 }
 </style>
