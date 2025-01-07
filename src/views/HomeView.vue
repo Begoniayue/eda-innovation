@@ -410,7 +410,7 @@ watch(displayedCode, () => {
     display: grid;
     padding: 20px;
     grid-template-columns: 1fr 1fr 1fr;
-    grid-template-rows:700px 200px 500px;
+    grid-template-rows:700px 100px 600px;
     grid-gap: 20px;
     margin-top: -115px;
 
