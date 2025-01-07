@@ -1,8 +1,9 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, watch,nextTick } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
+import hljs from "highlight.js";
 
 const ref_questionEditorContainer = ref(null)
 const ref_answerEditorContainer = ref(null)
@@ -19,10 +20,26 @@ const initialCode = {
 const b = 20;
 console.log(a + b);
 console.log(c); // This will cause an error.`,
-  python: `a = 10
-b = 20
-print(a + b)
-print(c)  # This will cause an error`,
+  python: `def solveNQueens(n):
+    def is_safe(board, row, col):
+        for i in range(row):
+            if board[i] == col or board[i] - i == col - row or board[i] + i == col + row:
+                return False
+        return True
+
+    def solve(board, row):
+        if row == n:
+            result.append(["." * i + "Q" + "." * (n - i - 1) for i in board])
+            return
+        for col in range(n):
+            if is_safe(board, row, col):
+                board[row] = col
+                solve(board, row + 1)
+                board[row] = -1
+
+    result = []
+    solve([-1] * n, 0)
+    return result`,
   java: `public class Main {
     public static void main(String[] args) {
         int a = 10;
@@ -178,20 +195,84 @@ setInterval(() => {
     message: 'Error: Something went wrong.'
   })
 }, 5000) // 每隔5秒输出日志
+//
+const code = ref('{\n' +
+    '    "Email": "string",\n' +
+    '    "Wxid": "string"\n' +
+    '}')
+const err = ref();
+// 初始化动态的 data
+const data = ref(`{
+import heapq
+
+class MedianFinder:
+
+    def __init__(self):
+        self.min_heap = []  # 存储较大的一半
+        self.max_heap = []  # 存储较小的一半
+
+    def addNum(self, num: int) -> None:
+        heapq.heappush(self.min_heap, num)
+        heapq.heappush(self.max_heap, -heapq.heappop(self.min_heap))
+        if len(self.min_heap) < len(self.max_heap):
+            heapq.heappush(self.min_heap, -heapq.heappop(self.max_heap))
+
+    def findMedian(self) -> float:
+        if len(self.min_heap) > len(self.max_heap):
+            return self.min_heap[0]
+        return (self.min_heap[0] - self.max_heap[0]) / 2.0
+}`)
+
+const displayedCode = ref('') // 用于保存逐步显示的代码
+
+const codeElement = ref(null) // 用于引用 <code> 元素
+
+// 运行代码
+const runCode = () => {
+  err.value = `  <pre>
+    <code>
+    编译出错
+      Line 5: Char 5: error: non-void function does not return a value [-Werror,-Wreturn-type]
+      5 |     }
+      |     ^
+      1 error generated.
+    </code>
+  </pre>`
+  typingEffect()
+}
+// 模拟逐字打字效果
+let index = 0
+const typingEffect = () => {
+  if (index < data.value.length) {
+    displayedCode.value += data.value[index]  // 逐字添加
+    index++
+    setTimeout(typingEffect, 50)  // 每50ms显示一个字符
+  }
+}
+
+// 在代码更新时应用语法高亮
+watch(displayedCode, () => {
+  nextTick(() => {
+    if (codeElement.value) {
+      hljs.highlightElement(codeElement.value) // 高亮更新后的代码
+    }
+  })
+})
+
 </script>
 
 <template>
   <div class="app">
-    <div class="app-header">
-      <div class="logo">
-        logo
-      </div>
-      <div class="buttons">
-        <div class="logo">
-          iDebug
-        </div>
-      </div>
-    </div>
+<!--    <div class="app-header">-->
+<!--      <div class="logo">-->
+<!--        logo-->
+<!--      </div>-->
+<!--      <div class="buttons">-->
+<!--        <div class="logo">-->
+<!--          iDebug-->
+<!--        </div>-->
+<!--      </div>-->
+<!--    </div>-->
     <div class="app-content">
       <div class="section-block">
         <h1>欢迎来到iDebug,有什么可以帮忙的？</h1>
@@ -209,6 +290,10 @@ setInterval(() => {
         <div class="header">
           <h2>Design Code Input:</h2>
           <LanguageSelector v-model="answerLanguage" />
+          <div class="button-item run-btn" @click="runCode">
+            <svg t="1736214690658" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2516" width="20" height="20"><path d="M396.5 661.9V110c0-6.1 7.5-9 11.6-4.6l366.6 394.3c2.4 2.6 2.4 6.6 0 9.1L408.1 903.2c-4.1 4.5-11.6 1.5-11.6-4.6V661.9z" fill="#67B47A" p-id="2517"></path></svg>
+            run
+          </div>
         </div>
         <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
       </div>
@@ -216,16 +301,15 @@ setInterval(() => {
         <div class="right-header">
           <h2>Debug Log:</h2>
         </div>
-      </div>
-    </div>
-    <div class="button-container">
-      <div class="button-item">
-        <svg t="1736214610331" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1519" width="20" height="20"><path d="M516.5 607.6l-62.7 62.7 6 9V736h56.7v53.8h-56.7v3c-2 19.9-7 37.8-14.9 53.8l71.7 74.7-38.8 38.8-62.7-62.7c-13.9 19.9-31.9 35.3-53.8 46.3s-44.8 16.4-68.7 16.4-46.8-5.5-68.7-16.4-39.8-26.4-53.8-46.3l-62.7 62.7-38.8-38.8 71.7-71.7c-8-17.9-12.9-35.8-14.9-53.8v-3H68.7v-56.7h56.7v-56.7l9-9-65.7-62.7 38.8-38.8 50.8 47.8c8-29.9 24.4-54.8 49.3-74.7s53.3-29.9 85.1-29.9 60.2 10 85.1 29.9c24.9 19.9 41.3 44.8 49.3 74.7l50.8-47.8 38.8 38.8z m-224-38.9c-23.9 0-43.8 8-59.7 23.9-15.9 15.9-23.9 35.8-23.9 59.7h167.3c0-23.9-8-43.8-23.9-59.7s-35.8-23.9-59.7-23.9zM406 709.1H182v83.6c2 29.9 13.4 55.3 34.3 76.2 20.9 20.9 46.3 32.4 76.2 34.3 29.9-2 55.3-13.4 76.2-34.3 20.9-20.9 33.4-46.3 37.3-76.2v-83.6zM391 64l-41.8 23.9v376.3c19.9 6 38.8 14.9 56.7 26.9V138.7l483.8 307.6-316.6 200.1v65.7l382.3-241.9v-47.8L391 64z" p-id="1520"></path></svg>
-        debug
-      </div>
-      <div class="button-item">
-        <svg t="1736214690658" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2516" width="20" height="20"><path d="M396.5 661.9V110c0-6.1 7.5-9 11.6-4.6l366.6 394.3c2.4 2.6 2.4 6.6 0 9.1L408.1 903.2c-4.1 4.5-11.6 1.5-11.6-4.6V661.9z" fill="#67B47A" p-id="2517"></path></svg>
-        run
+       <div class="code-print">
+         <div class="code-light code-light-top">
+           <div v-html="err" style="color: red"></div>
+         </div>
+         <div class="code-light">
+           <highlightjs language="Xml" :code="displayedCode">
+           </highlightjs>
+         </div>
+       </div>
       </div>
     </div>
     <div class="console-container">
@@ -445,7 +529,23 @@ setInterval(() => {
     align-items: center;
   }
 }
-
+.run-btn{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  color: #fff;
+  /* background: #181819; */
+  border-radius: 13px;
+  border: 1px solid #fff;
+  margin-bottom: 15px;
+  padding: 5px 8px;
+}
+.response-params{
+  margin-top: 45px;
+  color: #fff;
+  line-height: 40px;
+}
 
 //
 .console-container {
@@ -598,5 +698,64 @@ button:hover {
 
 .log-list::-webkit-scrollbar-thumb:hover, .console-output::-webkit-scrollbar-thumb:hover {
   background-color: #66b1ff; /* 鼠标悬停时的滑块颜色 */
+}
+
+///* 代码块样式 */
+.code-light-top{
+  margin-top: 45px;
+  line-height: 21px;
+}
+pre {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+  padding: 20px;
+  border-radius: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+code {
+  display: block;
+  padding: 10px;
+}
+.code-print {
+  max-height: 600px;
+  width: 100%;
+  white-space: wrap;
+  overflow-y: auto;
+  font-family: monospace;
+}
+
+/* 定义滚动条整体样式 */
+.code-print::-webkit-scrollbar {
+  width: 10px; /* 设置竖直滚动条宽度 */
+  height: 10px; /* 设置水平滚动条高度 */
+}
+
+/* 滚动条轨道（背景） */
+.code-print::-webkit-scrollbar-track {
+  background: #f0f0f0; /* 滚动条轨道背景 */
+  border-radius: 10px;
+}
+
+/* 滚动条滑块（可滑动部分） */
+.code-print::-webkit-scrollbar-thumb {
+  background: #888; /* 滚动条滑块的颜色 */
+  border-radius: 10px; /* 滚动条滑块的圆角 */
+}
+
+/* 滚动条滑块悬浮时的样式 */
+.code-print::-webkit-scrollbar-thumb:hover {
+  background: #555; /* 滑块悬浮时的颜色 */
+}
+
+/* 横向滚动条样式 */
+.code-print::-webkit-scrollbar-horizontal {
+  height: 8px;
+}
+
+/* 竖向滚动条样式 */
+.code-print::-webkit-scrollbar-vertical {
+  width: 8px;
 }
 </style>
