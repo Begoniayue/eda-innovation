@@ -4,14 +4,10 @@ const selectedLanguage = defineModel()
 
 <template>
   <div class="language-selector">
-    <label for="language">选择编程语言: </label>
+    <label for="language">编程语言: </label>
     <select id="language" v-model="selectedLanguage">
-      <option value="javascript">JavaScript</option>
-      <option value="javascript">Verilog</option>
+      <option value="verilog">Verilog</option>
       <option value="python">Python</option>
-      <option value="java">Java</option>
-      <option value="typescript">TypeScript</option>
-      <option value="cpp">C++</option>
     </select>
   </div>
 </template>
