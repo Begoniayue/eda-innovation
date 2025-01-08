@@ -254,7 +254,8 @@ const startIncrement = () => {
 };
 const repairCode = () => {
   runCode()
-  log.value = ''
+  logs.value = []
+  analyseLog.value = []
 };
 const testBuild = () => {
   runCode()
@@ -314,7 +315,7 @@ const testBuild = () => {
         <div class="button" @click="testBuild">测试生成</div>
         <div class="button" @click="logMessage">仿真</div>
         <div class="button" @click="analyerMessage">分析</div>
-        <div class="button">修复</div>
+        <div class="button" @click="repairCode">修复</div>
       </div>
         <div class="animate-fade">
           <img src="@/assets/images/shuju.png">
