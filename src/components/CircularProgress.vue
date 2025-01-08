@@ -17,7 +17,7 @@ watch(() => props.progress, (newProgress) => {
   const progress = newProgress < 0 ? 0 : newProgress > 100 ? 100 : newProgress
   const degree = (progress / 100) * 360
   progressStyle.value = {
-    background: `conic-gradient(#4855a3 ${degree}deg, #000 0deg)`
+    background: `conic-gradient(#6786f8a3 ${degree}deg, #c8d3e7 0deg)`
   }
 }, {
   immediate: true
@@ -60,7 +60,7 @@ watch(() => props.progress, (newProgress) => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: conic-gradient(#27dcad 0deg, #00abf1 0deg); /* 默认空白 */
+  background: conic-gradient(#1d49a8 0deg, #00abf1 0deg); /* 默认空白 */
   transition: background 0.3s ease;
 }
 
