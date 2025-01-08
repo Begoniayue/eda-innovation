@@ -66,7 +66,7 @@ onMounted(() => {
   answerEditor = monaco.editor.create(ref_answerEditorContainer?.value, {
     value: '',
     language: answerLanguage.value,
-    theme: 'vs-dark',
+    theme: 'vs-light',
     automaticLayout: true,
     lineNumbers: 'on'
   })
@@ -256,6 +256,7 @@ const repairCode = () => {
   runCode()
   logs.value = []
   analyseLog.value = []
+  clearHighLight()
 };
 const testBuild = () => {
   runCode()
