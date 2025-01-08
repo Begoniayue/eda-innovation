@@ -281,10 +281,32 @@ const testBuild = () => {
 <!--        <h1>欢迎来到iDebug,有什么可以帮忙的？</h1>-->
 <!--      </div>-->
 <!--    </div>-->
+    <div class="app-header">
+      <div class="logo">
+        logo
+      </div>
+      <div class="buttons">
+        <div class="logo">
+          iDebug
+        </div>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="banner-content-bg">
+        <h1 class="title">欢迎来到iDebug,有什么可以帮忙的？</h1>
+<!--        <video autoplay="" loop="" muted=""-->
+<!--               src="https://res-video.hc-cdn.com/cloudbu-site/china/zh-cn/advertisement/Fixed/banner/CDN-2k.mp4" style="opacity: 1;">-->
+<!--        </video>   -->
+        <video autoplay="" loop="" muted=""
+               src="https://res-video.hc-cdn.com/cloudbu-site/china/zh-cn/advertisement/Fixed/banner/1725874846387175930.mp4" style="opacity: 1;">
+        </video>
+
+      </div>
+    </div>
     <div class="main-content">
       <div class="left">
         <div class="header">
-          <h2>Spec Input:</h2>
+          <h2>Spec Input</h2>
         </div>
         <div style="background: #f5f5f5;border-radius: 15px;height: calc(100% - 44px)">
           <TinyEditor v-model="initSpec" :height="515" :language="'json'" />
@@ -292,7 +314,7 @@ const testBuild = () => {
       </div>
       <div class="right">
         <div class="header">
-          <h2>Debug Log:</h2>
+          <h2>Debug Log</h2>
         </div>
         <div class="code-print">
           <div class="code-light code-light-top">
@@ -304,7 +326,7 @@ const testBuild = () => {
       </div>
       <div class="middle">
         <div class="header">
-          <h2>Design Code Input:</h2>
+          <h2>Design Code Input</h2>
           <LanguageSelector v-model="answerLanguage" />
         </div>
         <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
@@ -374,7 +396,7 @@ const testBuild = () => {
   display: flex;
   flex-direction: column;
   color: #fff;
-  background: url("../assets/images/img_1.png");
+  background: url("../assets/images/img_2.png");
 
 
   .app-header {
@@ -427,7 +449,6 @@ const testBuild = () => {
     grid-template-rows:560px 0px 0px;
     grid-gap: 10px;
     padding-bottom: 0px;
-    margin-top: 120px;
 
     .left, .middle, .right {
       position: relative;
@@ -516,7 +537,7 @@ const testBuild = () => {
 
       .header {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
       }
     }
 
@@ -525,7 +546,7 @@ const testBuild = () => {
 
       .header {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
       }
     }
 
@@ -534,7 +555,8 @@ const testBuild = () => {
 
       .header {
         padding-left: 20px;
-        width: 50%;
+        display: flex;
+        justify-content: center;
       }
     }
 
@@ -912,6 +934,21 @@ code {
 
   to {
     top: 0
+  }
+}
+.banner-content-bg{
+  position: relative;
+  .title{
+    color: #333333;
+    font-size: 44px;
+    position: absolute;
+    top: 40%;
+    left: 1%;
+
+  }
+  video{
+    height: 100%;
+    width: 100%;
   }
 }
 </style>
