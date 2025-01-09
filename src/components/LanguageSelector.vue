@@ -16,11 +16,8 @@ const selectedLanguage = defineModel()
 .language-selector {
   display: inline-flex;
   align-items: center;
-  margin-left: 15px;
   font-size: 16px;
   color: #fff;
-  margin-bottom: 15px;
-  padding-right: 10px;
 
   label {
     margin-right: 10px;
