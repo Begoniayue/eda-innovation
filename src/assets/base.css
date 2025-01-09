@@ -11,3 +11,27 @@ body {
     min-width: 100%;
     min-height: 100vh;
 }
+:global(.code-fence){
+    box-sizing: border-box;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    font-variant-numeric: normal;
+    font-variant-east-asian: normal;
+    font-variant-alternates: normal;
+    font-size-adjust: none;
+    font-kerning: auto;
+    font-optical-sizing: auto;
+    font-feature-settings: normal;
+    font-variation-settings: normal;
+    font-variant-position: normal;
+    font-variant-emoji: normal;
+    font-stretch: normal;
+    font-size: 0.85em;
+    line-height: 1.45;
+    font-family: "JetBrains Mono", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+    padding: 16px;
+    overflow: auto;
+    border-radius: 3px;
+    color: rgb(36, 41, 46);
+    background-color: rgba(212, 222, 231, 0.247);
+}

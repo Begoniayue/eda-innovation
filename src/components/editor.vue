@@ -23,6 +23,16 @@ const { disabled, height, resize, inline, placeholder, plugins, toolbar, uploadP
     type: [ Number, String ],
     default: 300
   },
+  content_css: {
+    type: [String, Array],
+    default: ['@/assets/base.css']
+  },
+  content_style: {
+    type: [String, Array],
+    default: [
+      'code { margin: 10px 0;background:#f5f5f5}'
+    ]
+  },
   resize: {
     type: Boolean,
     default: false
@@ -37,17 +47,15 @@ const { disabled, height, resize, inline, placeholder, plugins, toolbar, uploadP
   },
   plugins: {
     type: [String, Array],
-    default: 'advlist anchor autolink autosave code codesample charmap directionality emoticons fullscreen ' +
+    default: 'code advlist anchor autolink autosave  codesample charmap directionality emoticons fullscreen ' +
              'image insertdatetime link lists media nonbreaking pagebreak preview save searchreplace ' +
-             'table visualblocks visualchars wordcount'
+             'table'
   },
   toolbar: {
     type: [String, Array],
     default: 'fullscreen preview | forecolor backcolor bold italic underline image strikethrough link anchor | \
-              alignleft aligncenter alignright alignjustify | outdent indent lineheight | \
-              bullist numlist | blockquote subscript superscript removeformat | cut copy paste pastetext | \
-              table rspace  media charmap emoticons hr pagebreak insertdatetime | \
-              searchreplace codesample code undo redo restoredraft print '
+              alignleft aligncenter alignright alignjustify | outdent indent lineheight | blockquote subscript superscript removeformat | cut copy paste pastetext | \
+              table searchreplace codesample code undo redo   '
   },
   uploadParams: {
     type: Object,
@@ -152,3 +160,9 @@ watch(editorConfig, () => {
     </editor>
   </div>
 </template>
+<style scoped>
+.tinymce-editor {
+  width: 100%;
+}
+
+</style>

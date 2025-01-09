@@ -262,45 +262,35 @@ const testBuild = () => {
   runCode()
   startIncrement()
 };
+const domScoll = () => {
+  const element = document.getElementById('main-content')
+  element.scrollIntoView({ behavior: 'smooth' })
+}
 </script>
 
 <template>
   <div class="app">
-<!--        <div class="app-header">-->
-<!--          <div class="logo">-->
-<!--            logo-->
-<!--          </div>-->
-<!--          <div class="buttons">-->
-<!--            <div class="logo">-->
-<!--              iDebug-->
-<!--            </div>-->
-<!--          </div>-->
-<!--        </div>-->
-<!--    <div class="app-content">-->
-<!--      <div class="section-block">-->
-<!--        <h1>欢迎来到iDebug,有什么可以帮忙的？</h1>-->
-<!--      </div>-->
-<!--    </div>-->
     <div class="app-header">
-      <div class="logo">
-        logo
-      </div>
       <div class="buttons">
         <div class="logo">
           iDebug
         </div>
       </div>
+      <div class="logo">
+        <img src="https://www.nctieda.com/images/logo1.png" alt="" width="400"></img>
+      </div>
+
     </div>
     <div class="app-content">
       <div class="banner-content-bg">
-        <h1 class="title">欢迎来到iDebug,有什么可以帮忙的？</h1>
-<!--        <video autoplay="" loop="" muted=""-->
-<!--               src="https://res-video.hc-cdn.com/cloudbu-site/china/zh-cn/advertisement/Fixed/banner/CDN-2k.mp4" style="opacity: 1;">-->
-<!--        </video>   -->
+        <div class="title">
+          <div>欢迎来到iDebug,有什么可以帮忙的？</div>
+          <div class="try-button" @click="domScoll">立即体验</div>
+        </div>
         <video autoplay="" loop="" muted=""
                src="https://res-video.hc-cdn.com/cloudbu-site/china/zh-cn/advertisement/Fixed/banner/1725874846387175930.mp4" style="opacity: 1;">
         </video>
-
+        <div class="events-container"></div>
       </div>
     </div>
     <div class="main-content">
@@ -332,38 +322,41 @@ const testBuild = () => {
         <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
       </div>
     </div>
-    <div class="bottom">
+    <div class="main-content">
       <div class="left">
-        <div class="button-list">
-        <div class="button" @click="testBuild">测试生成</div>
-        <div class="button" @click="logMessage">仿真</div>
-        <div class="button" @click="analyerMessage">分析</div>
-        <div class="button" @click="repairCode">修复</div>
-      </div>
-        <div class="animate-fade">
-          <img src="@/assets/images/shuju.png">
+        <div style="background: #ffffff">
+          <div class="button-list">
+            <div class="button" @click="testBuild">测试生成</div>
+            <div class="button" @click="logMessage">仿真</div>
+            <div class="button" @click="analyerMessage">分析</div>
+            <div class="button" @click="repairCode">修复</div>
+          </div>
+          <div class="animate-fade">
+            <img src="@/assets/images/shuju.png">
+          </div>
+          <div class="coverage">
+            <div class="progress-item">
+              <div class="title">功能覆盖率</div>
+              <div class="desc">code coverage</div>
+              <CircularProgress :progress="progress" />
+            </div>
+            <div class="progress-item">
+              <div class="title">行覆盖率</div>
+              <div class="desc"> line coverage </div>
+              <CircularProgress :progress="lineCoverage" />
+            </div>
+            <div class="progress-item">
+              <div class="title">翻转覆盖率</div>
+              <div class="desc">function coverage</div>
+              <CircularProgress :progress="functionCoverage" />
+            </div>
+          </div>
         </div>
-        <div class="coverage">
-          <div class="progress-item">
-            <div class="title">功能覆盖率</div>
-            <div class="desc">code coverage</div>
-            <CircularProgress :progress="progress" />
-          </div>
-          <div class="progress-item">
-            <div class="title">行覆盖率</div>
-            <div class="desc"> line coverage </div>
-            <CircularProgress :progress="lineCoverage" />
-          </div>
-          <div class="progress-item">
-            <div class="title">翻转覆盖率</div>
-            <div class="desc">function coverage</div>
-            <CircularProgress :progress="functionCoverage" />
-          </div>
-        </div>
+
       </div>
-      <div class="right">
+      <div class="left">
         <div class="console-output-section">
-          <div class="console-header">结果Result</div>
+          <h2 class="console-header">结果Result</h2>
           <div class="console-output">
             <div v-if="logs.length>0">
               <div v-for="(log, index) in logs" :key="index" :class="log.type">
@@ -373,8 +366,11 @@ const testBuild = () => {
             <div v-else class="no-log">Select a log to see details...</div>
           </div>
         </div>
+      </div>
+      <div class="right">
+
         <div class="console-output-section">
-          <div class="console-header">分析Analyze</div>
+          <h2 class="console-header">分析Analyze</h2>
           <div class="console-output">
             <div v-if="logs.length>0">
               <div v-for="(log, index) in analyseLog" :key="index" :class="log.type">
@@ -395,10 +391,8 @@ const testBuild = () => {
 .app {
   display: flex;
   flex-direction: column;
-  color: #fff;
-  background: url("../assets/images/img_2.png");
-
-
+  color: #333333;
+  background-color: #f7f7f7;
   .app-header {
     display: flex;
     justify-content: space-between;
@@ -411,7 +405,7 @@ const testBuild = () => {
     .logo {
       font-size: 24px;
       font-weight: bold;
-      color: #0071e3;
+      color: #333333;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", "Arial", sans-serif;
     }
 
@@ -449,6 +443,7 @@ const testBuild = () => {
     grid-template-rows:560px 0px 0px;
     grid-gap: 10px;
     padding-bottom: 0px;
+    margin-top: -28px;
 
     .left, .middle, .right {
       position: relative;
@@ -460,10 +455,8 @@ const testBuild = () => {
         margin-bottom: 15px;
         font-size: 24px;
         font-weight: bold;
-        background: linear-gradient(to right, #333, #162ba8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        letter-spacing: 2px;
+        color: #333333;
+
       }
     }
 
@@ -569,9 +562,8 @@ const testBuild = () => {
   }
 
   .title {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
-    text-transform: uppercase;
     color: #333333;
     padding: 10px 30px;
     //margin: 0 20px;
@@ -593,9 +585,7 @@ const testBuild = () => {
 
     h1 {
       text-align: center;
-      background: linear-gradient(to right, #162ba8, #409eff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #333333;
       font-weight: normal;
       letter-spacing: 2px;
     }
@@ -650,16 +640,16 @@ const testBuild = () => {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  height: 300px;
+  height: 320px;
   text-align: left;
   border-radius: 12px;
 }
 
 .console-header {
   padding: 10px;
-  background-color: #fff;
   text-align: center;
   font-weight: bold;
+  color: #333333;
 }
 
 .log-list {
@@ -807,7 +797,7 @@ code {
 .code-print {
   height: calc(100% - 44px);
   border-radius: 15px;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   color: #333;
   font-size: 20px;
   width: 100%;
@@ -816,6 +806,10 @@ code {
   white-space: wrap;
   overflow-y: auto;
   font-family: monospace;
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .08);
+    z-index: 1;
+  }
 }
 
 /* 定义滚动条整体样式 */
@@ -877,6 +871,9 @@ code {
 .button-list{
   display: flex;
   justify-content: start;
+  padding-top: 20px;
+  margin-bottom: -30px;
+  padding-left: 15px;
   .button{
     background-color: #e7f1ff;
     color: #1677ff;
@@ -909,6 +906,7 @@ code {
 .progress-item{
   color: #333333;
   .desc{
+    text-align: center;
     margin-bottom: 20px;
   }
 }
@@ -918,9 +916,10 @@ code {
   right: 15px;
   top: 10px;
   img{
-    height: 114px;
-    width: 82px;
+    height: 70px;
+    width: 60px;
     display: inline-block;
+    margin-top: 10px;
   }
 }
 @keyframes matrixTopTranslate {
@@ -938,17 +937,62 @@ code {
 }
 .banner-content-bg{
   position: relative;
+  height: 100%;
   .title{
     color: #333333;
-    font-size: 44px;
+    font-size: 30px;
     position: absolute;
-    top: 40%;
+    top: 32%;
     left: 1%;
-
+    opacity: 0; /* 动画前初始状态 */
+    transform: translateY(30px); /* 初始位置向下 */
+    animation: slideUpFade 1s ease-out 0.5s forwards; /* 延迟0.5s出现 */
+    transition: all 0.3s ease-in-out;
   }
   video{
     height: 100%;
     width: 100%;
+  }
+}
+.try-button{
+  width: 200px;
+  border: 1px solid #595959;
+  border-radius: 30px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  font-size: 18px;
+  height: 60px;
+  line-height: 60px;
+  padding: 0 32px;
+  text-align: center;
+  margin-top: 30px;
+  cursor: pointer;
+  opacity: 0; /* 动画前初始状态 */
+  transform: translateY(30px); /* 初始位置向下 */
+  animation: slideUpFade 1s ease-out 0.5s forwards; /* 延迟0.5s出现 */
+  transition: all 0.3s ease-in-out;
+  z-index: 999999;
+}
+.events-container {
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  background: hsla(0, 0%, 99%, .2);
+  bottom: 0;
+  height: 40px;
+  width: 100%;
+  z-index: 99;
+  margin-top: -20px;
+}
+
+/* 向上移动和淡入的动画 */
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(30px); /* 初始位置向下 */
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0); /* 目标位置 */
   }
 }
 </style>
