@@ -3,6 +3,7 @@ import { onMounted, ref, watch, nextTick } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
+import WangEditor from '@/components/WangEditor.vue'
 
 const ref_editor = ref(null)
 const ref_answerEditorContainer = ref(null)
@@ -19,18 +20,6 @@ onMounted(() => {
     lineNumbers: 'on'
   })
   decorationsCollection = answerEditor.createDecorationsCollection()
-  $('#summernote').summernote({
-    tabsize: 2,
-    toolbar: [
-      ['style', ['style']],
-      ['font', ['bold', 'underline', 'clear']],
-      ['color', ['color']],
-      ['para', ['ul', 'ol', 'paragraph']],
-      ['table', ['table']],
-      ['insert', ['link', 'picture', 'video']],
-      ['view', ['fullscreen', 'codeview', 'help']]
-    ]
-  })
 })
 const setHighLightStyle = () => {
   const style = document.createElement('style')
@@ -330,7 +319,7 @@ init()
           </div>
         </div>
         <div style="height: calc(100% - 44px)">
-          <div id="summernote" ref="ref_editor" style="height: 100%"></div>
+          <WangEditor style="height: 100%" />
         </div>
       </div>
       <div class="item item-2">
