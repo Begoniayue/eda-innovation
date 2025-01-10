@@ -5,6 +5,7 @@ import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
 import TinyEditor from '@/components/editor.vue'
 
+const ref_editor = ref(null)
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
 let decorationsCollection = null
@@ -21,6 +22,18 @@ onMounted(() => {
     lineNumbers: 'on'
   })
   decorationsCollection = answerEditor.createDecorationsCollection()
+  $('#summernote').summernote({
+    tabsize: 2,
+    toolbar: [
+      ['style', ['style']],
+      ['font', ['bold', 'underline', 'clear']],
+      ['color', ['color']],
+      ['para', ['ul', 'ol', 'paragraph']],
+      ['table', ['table']],
+      ['insert', ['link', 'picture', 'video']],
+      ['view', ['fullscreen', 'codeview', 'help']]
+    ]
+  })
 })
 const setHighLightStyle = () => {
   const style = document.createElement('style')
@@ -143,7 +156,7 @@ const testBuild = () => {
     appendLog({
       log: {
         type: 'normal',
-        message: '11111'
+        message: '[    0] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp0cfg_executeable_assignment'
       },
       target: 'log'
     })
@@ -157,7 +170,7 @@ const assertCreate = () => {
     appendLog({
       log: {
         type: 'normal',
-        message: '222222'
+        message: '[    3] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp1cfg_executeable_assignment'
       },
       target: 'log'
     })
@@ -172,25 +185,23 @@ const emulation = () => {
       appendLog({
         log: {
           type: 'normal',
-          message: '3333333'
+          message: '[   13] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp4cfg_readable_assignment'
         },
         target: 'log'
       })
     }, 1000)
     // append result
-    setInterval(() => {
-      appendLog({
-        log: {
-          type: 'normal',
-          message: '3333333'
-        },
-        target: 'result'
-      })
-    }, 1000)
+    appendLog({
+      log: {
+        type: 'error',
+        message: '[   20] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp6cfg_writable_assignment'
+      },
+      target: 'result'
+    })
     return
   }
   // after fix button clear result log and append success info
-  logMessages.value = []
+  resultLogMessages.value = []
   appendLog({
     log: {
       type: 'success',
@@ -205,7 +216,7 @@ const analyze = () => {
     appendLog({
       log: {
         type: 'normal',
-        message: '4444444'
+        message: '[   37] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp_updt_pmpaddr5_blocking_assignment'
       },
       target: 'log'
     })
@@ -215,7 +226,7 @@ const analyze = () => {
     appendLog({
       log: {
         type: 'normal',
-        message: '4444444'
+        message: 'The default state of pmp5cfg_readable is incorrectly set to 1 during reset, which should be 0. It affects the value of pmpcfg0_value being read.'
       },
       target: 'analyze'
     })
@@ -237,7 +248,8 @@ const repairCode = () => {
     })
   }, 1000)
   // fix error line
-  replaceCodeLine(2, '// asdfasdfasdfasdf')
+  replaceCodeLine(5, '// asdfasdfasdfasdf')
+  clearHighLight()
 }
 const domScroll = () => {
   // 先滚动再隐藏
@@ -279,8 +291,8 @@ init()
         <div class="header">
           <h2>Spec Input</h2>
         </div>
-        <div style="background: #f5f5f5;border-radius: 15px;height: calc(100% - 44px)">
-          <TinyEditor v-model="initSpec" :height="515" :language="'json'" />
+        <div style="height: calc(100% - 44px)">
+          <div id="summernote" ref="ref_editor" style="height: 100%"></div>
         </div>
       </div>
       <div class="item item-2">
