@@ -8,10 +8,8 @@ const ref_editor = ref(null)
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
 let decorationsCollection = null
-const answerLanguage = ref('python')
+const answerLanguage = ref('verilog')
 
-// 初始代码
-const initSpec = ref(``)
 onMounted(() => {
   answerEditor = monaco.editor.create(ref_answerEditorContainer?.value, {
     value: '',
@@ -40,6 +38,9 @@ const setHighLightStyle = () => {
     .highlight-error-line {
         background-color: rgba(165, 42, 42, 0.5);
     }
+    .highlight-success-line {
+        background-color: rgba(0, 255, 0, 0.5);
+    }
 `
   document.head.appendChild(style)
 }
@@ -58,6 +59,21 @@ const appendCodeLine = () => {
   // 滚动到最后一行
   answerEditor.revealLine(lastLine + 1)
 }
+const deleteCodeLine = (lineNumber) => {
+  const model = answerEditor.getModel() // 获取模型
+
+  // 获取该行的范围
+  const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber))
+
+  // 使用 applyEdits 删除指定行的内容
+  model.applyEdits([
+    {
+      range: range,
+      text: '', // 删除内容，空字符串
+      forceMoveMarkers: true
+    }
+  ])
+}
 const replaceCodeLine = (lineNumber, newContent) => {
   const model = answerEditor.getModel() // 获取模型
 
@@ -67,11 +83,18 @@ const replaceCodeLine = (lineNumber, newContent) => {
   // 替换指定行的代码
   model.applyEdits([
     {
-      range: range,
+      range,
       text: newContent,
       forceMoveMarkers: true
     }
   ])
+  decorationsCollection.set([{
+    range,
+    options: {
+      isWholeLine: true,
+      className: 'highlight-success-line'
+    }
+  }])
 }
 const clearHighLight = () => {
   if (!decorationsCollection) {
@@ -83,14 +106,13 @@ const setHighLight = (options) => {
   if (!decorationsCollection) {
     return
   }
-  const decorationOptions = [{
+  decorationsCollection.set([{
     range: new monaco.Range(113, 1, 113, 1),
     options: {
       isWholeLine: true,
       className: 'highlight-error-line'
     }
-  }]
-  decorationsCollection.set(decorationOptions)
+  }])
 }
 const init = () => {
   setHighLightStyle()
@@ -139,6 +161,7 @@ const reset = () => {
   logMessages.value = []
   // clear code input
   answerEditor.setModel(monaco.editor.createModel('', answerLanguage.value))
+  clearHighLight()
   // reset process pie
   progress.value = 0
   functionCoverage.value = 0
@@ -174,6 +197,7 @@ const assertCreate = () => {
     })
   }, 1000)
   // append code in code input
+  deleteCodeLine(answerEditor.getModel().getLineCount())
   appendCodeLine()
 }
 const emulation = () => {
@@ -247,19 +271,18 @@ const repairCode = () => {
   }, 1000)
   // fix error line
   replaceCodeLine(5, '// asdfasdfasdfasdf')
-  clearHighLight()
 }
-const mainContent = ref(null);
-const isVisible = ref(true);
+const mainContent = ref(null)
+const isVisible = ref(true)
 
 const domScroll = () => {
   if (mainContent.value) {
-    mainContent.value.scrollIntoView({ behavior: 'smooth' });
+    mainContent.value.scrollIntoView({ behavior: 'smooth' })
     setTimeout(() => {
-      isVisible.value = false;
-    }, 1000); // 1秒后隐藏元素，可以根据需要调整时间
+      isVisible.value = false
+    }, 1000) // 1秒后隐藏元素，可以根据需要调整时间
   }
-};
+}
 
 watch(answerLanguage, (value) => {
   answerEditor.setModel(monaco.editor.createModel('', value))
@@ -297,8 +320,13 @@ init()
       <div class="item item-1">
         <div class="header">
           <h2>Spec Input</h2>
-          <div  @click="reset" style="margin-top: 5px;margin-left: 5px">
-            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1676" width="20" height="20"><path d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z" fill="#1677ff" p-id="1677"></path></svg>
+          <div @click="reset" style="margin-top: 5px;margin-left: 5px;cursor: pointer">
+            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 p-id="1676" width="20" height="20">
+              <path
+                d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z"
+                fill="#1677ff" p-id="1677"></path>
+            </svg>
           </div>
         </div>
         <div style="height: calc(100% - 44px)">
@@ -308,8 +336,13 @@ init()
       <div class="item item-2">
         <div class="header">
           <h2>Log</h2>
-          <div @click="reset"  style="margin-top: 5px;margin-left: 5px">
-            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1676" width="20" height="20"><path d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z" fill="#1677ff" p-id="1677"></path></svg>
+          <div @click="reset" style="margin-top: 5px;margin-left: 5px;cursor: pointer">
+            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                 p-id="1676" width="20" height="20">
+              <path
+                d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z"
+                fill="#1677ff" p-id="1677"></path>
+            </svg>
           </div>
         </div>
         <div class="console-output-section">
@@ -365,7 +398,7 @@ init()
           <h2>结果Result</h2>
         </div>
         <div class="console-output-section">
-          <div class="console-output"  v-auto-scroll>
+          <div class="console-output" v-auto-scroll>
             <template v-if="resultLogMessages.length>0">
               <div v-for="(log, index) in resultLogMessages" :key="index" :class="log.type">
                 {{ log.message }}
