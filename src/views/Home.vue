@@ -85,13 +85,12 @@ const setHighLight = (options) => {
     return
   }
   const decorationOptions = [{
-    range: new monaco.Range(5, 1, 5, 1),
+    range: new monaco.Range(113, 1, 113, 1),
     options: {
       isWholeLine: true,
       className: 'highlight-error-line'
     }
   }]
-
   decorationsCollection.set(decorationOptions)
 }
 const init = () => {
@@ -194,7 +193,7 @@ const emulation = () => {
     appendLog({
       log: {
         type: 'error',
-        message: '[   20] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp6cfg_writable_assignment'
+        message: '[20] proven                   (non_vacuous)  -  ct_pmp_regs.assert_p_pmp6cfg_writable_assignment'
       },
       target: 'result'
     })
@@ -251,9 +250,18 @@ const repairCode = () => {
   replaceCodeLine(5, '// asdfasdfasdfasdf')
   clearHighLight()
 }
+const mainContent = ref(null);
+const isVisible = ref(true);
+
 const domScroll = () => {
-  // 先滚动再隐藏
-}
+  if (mainContent.value) {
+    mainContent.value.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      isVisible.value = false;
+    }, 1000); // 1秒后隐藏元素，可以根据需要调整时间
+  }
+};
+
 watch(answerLanguage, (value) => {
   answerEditor.setModel(monaco.editor.createModel('', value))
 })
@@ -272,7 +280,7 @@ init()
         <img src="https://www.nctieda.com/images/logo1.png" alt="" width="400" />
       </div>
     </div>
-    <div class="app-content">
+    <div class="app-content" v-if="isVisible">
       <div class="banner-content-bg">
         <div class="title">
           <div>欢迎来到iDebug,有什么可以帮忙的？</div>
@@ -286,10 +294,13 @@ init()
         <div class="events-container"></div>
       </div>
     </div>
-    <div class="main-content">
+    <div class="main-content" ref="mainContent">
       <div class="item item-1">
         <div class="header">
           <h2>Spec Input</h2>
+          <div  @click="reset" style="margin-top: 5px;margin-left: 5px">
+            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1676" width="20" height="20"><path d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z" fill="#1677ff" p-id="1677"></path></svg>
+          </div>
         </div>
         <div style="height: calc(100% - 44px)">
           <div id="summernote" ref="ref_editor" style="height: 100%"></div>
@@ -298,6 +309,9 @@ init()
       <div class="item item-2">
         <div class="header">
           <h2>Log</h2>
+          <div @click="reset"  style="margin-top: 5px;margin-left: 5px">
+            <svg t="1736471478981" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1676" width="20" height="20"><path d="M861.866667 349.866667l-102.4 102.4C733.866667 341.333333 631.466667 256 512 256c-140.8 0-256 115.2-256 256s115.2 256 256 256c136.533333 0 251.733333-106.666667 256-243.2l76.8-76.8c4.266667 21.333333 8.533333 42.666667 8.533333 68.266667 0 187.733333-153.6 341.333333-341.333333 341.333333s-341.333333-153.6-341.333333-341.333333 153.6-341.333333 341.333333-341.333334c110.933333 0 213.333333 55.466667 273.066667 136.533334l8.533333-12.8h119.466667l-51.2 51.2z" fill="#1677ff" p-id="1677"></path></svg>
+          </div>
         </div>
         <div class="console-output-section">
           <div class="console-output" v-auto-scroll>
@@ -352,7 +366,7 @@ init()
           <h2>结果Result</h2>
         </div>
         <div class="console-output-section">
-          <div class="console-output" v-auto-scroll>
+          <div class="console-output"  v-auto-scroll>
             <template v-if="resultLogMessages.length>0">
               <div v-for="(log, index) in resultLogMessages" :key="index" :class="log.type">
                 {{ log.message }}
