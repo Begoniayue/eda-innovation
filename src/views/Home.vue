@@ -3,13 +3,13 @@ import { onMounted, ref, watch, nextTick } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
-import WangEditor from '@/components/WangEditor.vue'
+import Editor from '@/components/Editor.vue'
 
 const ref_editor = ref(null)
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
 let decorationsCollection = null
-const answerLanguage = ref('verilog')
+const answerLanguage = ref('Chisel')
 
 onMounted(() => {
   answerEditor = monaco.editor.create(ref_answerEditorContainer?.value, {
@@ -96,7 +96,7 @@ const setHighLight = (options) => {
     return
   }
   decorationsCollection.set([{
-    range: new monaco.Range(113, 1, 113, 1),
+    range: new monaco.Range(5, 1, 5, 1),
     options: {
       isWholeLine: true,
       className: 'highlight-error-line'
@@ -319,8 +319,17 @@ init()
           </div>
         </div>
         <div style="height: calc(100% - 44px)">
-          <WangEditor style="height: 100%" />
+          <Editor style="height: 100%" />
         </div>
+      </div>
+
+      <div class="item item-3">
+        <div class="header">
+          <h2>Design Code Input</h2>
+          &nbsp;&nbsp;
+          <LanguageSelector v-model="answerLanguage" />
+        </div>
+        <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
       </div>
       <div class="item item-2">
         <div class="header">
@@ -344,14 +353,6 @@ init()
             <div v-else class="normal">...</div>
           </div>
         </div>
-      </div>
-      <div class="item item-3">
-        <div class="header">
-          <h2>Design Code Input</h2>
-          &nbsp;&nbsp;
-          <LanguageSelector v-model="answerLanguage" />
-        </div>
-        <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
       </div>
       <div class="item item-4">
         <div style="background: #ffffff">

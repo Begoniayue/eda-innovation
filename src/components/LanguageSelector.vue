@@ -6,8 +6,9 @@ const selectedLanguage = defineModel()
   <div class="language-selector">
 <!--    <label for="language">编程语言: </label>-->
     <select id="language" v-model="selectedLanguage">
-      <option value="verilog">Verilog</option>
       <option value="chisel">Chisel</option>
+      <option value="verilog">Verilog</option>
+
     </select>
   </div>
 </template>
