@@ -3,7 +3,6 @@ import { onMounted, ref, watch, nextTick } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
-import hljs from 'highlight.js'
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null

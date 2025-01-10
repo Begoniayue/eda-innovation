@@ -3,7 +3,6 @@ import { onMounted, ref, watch, nextTick } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
-import TinyEditor from '@/components/editor.vue'
 
 const ref_editor = ref(null)
 const ref_answerEditorContainer = ref(null)
