@@ -4,6 +4,7 @@ import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import CircularProgress from '@/components/CircularProgress.vue'
 import Editor from '@/components/Editor.vue'
+import Vditor from '@/components/Vditor.vue'
 import ModuleCard from '@/components/ModuleCard.vue'
 import { appendCode, originalCode } from '@/datas/code'
 import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
@@ -257,7 +258,7 @@ const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
 
 // Sending a message
 wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
-
+const specHtml = ref (null)
 </script>
 
 <template>
@@ -285,17 +286,23 @@ wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
               @click="reset">
           </template>
           <template #default>
-            <Editor />
+<!--            <Editor-->
+<!--              v-model="specHtml"-->
+
+<!--            />-->
+            <Vditor
+              v-model="specHtml"
+              :options="{
+                height: 560, // 高度
+              }"
+            />
           </template>
         </ModuleCard>
         <div style="margin-bottom: 20px"></div>
         <ModuleCard height="308px">
           <template #title>
             Log
-            <img
-              src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
-              @click="reset"
-            >
+
           </template>
           <template #default>
             <div class="console-output-section">
@@ -316,6 +323,10 @@ wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
           <template #title>
             Design Code Input
             &nbsp;&nbsp;
+            <img
+              src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
+              @click="reset"
+            >&nbsp;&nbsp;
             <LanguageSelector v-model="answerLanguage" />
           </template>
           <template #default>
