@@ -310,7 +310,7 @@ init()
         <div style="margin-bottom: 20px"></div>
         <ModuleCard height="308px">
           <template #title>
-            Spec Input
+            Log
             <img
               src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
               @click="reset"
