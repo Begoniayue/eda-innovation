@@ -19,7 +19,7 @@ onMounted(() => {
     },
     after: () => {
       // 编辑器启动后，直接插入一段`Hello`，正式使用视情况修改
-      vditor.setValue('hello, Vditor + Vue!')
+      // vditor.setValue('hello, Vditor + Vue!')
     },
   })
 })
