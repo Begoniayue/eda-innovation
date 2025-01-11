@@ -327,7 +327,7 @@ setTimeout(() => {
           </template>
         </ModuleCard>
       </div>
-      <div class="item" style="width: 460px">
+      <div class="item">
         <ModuleCard height="356px">
           <template #title>
             <div class="button-list">
@@ -448,8 +448,8 @@ setTimeout(() => {
 
   .main-content {
     display: grid;
-    padding: 30px 80px 38px 80px;
-    grid-template-columns: 1fr 1fr 1fr;
+    padding: 30px 40px 38px 40px;
+    grid-template-columns: 450px auto 450px;
     grid-gap: 20px;
 
     .item {
