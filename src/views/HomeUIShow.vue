@@ -7,7 +7,7 @@ import Editor from '@/components/Editor.vue'
 import ModuleCard from '@/components/ModuleCard.vue'
 import { appendCode, originalCode } from '@/datas/code'
 import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
-import { WebSocketClient } from '@/utils/websocket'
+import { createWebSocketClient } from '@/utils/websocket'
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
@@ -248,7 +248,7 @@ watch(answerLanguage, (value) => {
   answerEditor.setModel(monaco.editor.createModel('', value))
 })
 init()
-const wsClient = new WebSocketClient('ws://10.201.230.232:18765', [], {
+const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => console.log('Received message:', data),
   onError: (error) => console.error('Error occurred:', error),
@@ -258,10 +258,6 @@ const wsClient = new WebSocketClient('ws://10.201.230.232:18765', [], {
 // Sending a message
 wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
 
-// Closing the connection
-setTimeout(() => {
-  wsClient.close(1000, 'Normal closure')
-}, 60000) // Close after 60 seconds
 </script>
 
 <template>
