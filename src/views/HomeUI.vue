@@ -299,7 +299,9 @@ init()
         <ModuleCard height="552px">
           <template #title>
             Spec Input
-            <img src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px" alt="" @click="reset">
+            <img
+              src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
+              @click="reset">
           </template>
           <template #default>
             <Editor />
@@ -309,7 +311,10 @@ init()
         <ModuleCard height="308px">
           <template #title>
             Spec Input
-            <img src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px" alt="" @click="reset">
+            <img
+              src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
+              @click="reset"
+            >
           </template>
           <template #default>
             <div class="console-output-section">
