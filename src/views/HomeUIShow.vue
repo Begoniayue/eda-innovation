@@ -312,7 +312,7 @@ init()
           </template>
         </ModuleCard>
       </div>
-      <div class="item">
+      <div class="item" style="width: 460px">
         <ModuleCard height="356px">
           <template #title>
             <div class="button-list">
@@ -428,7 +428,6 @@ init()
       background: linear-gradient(34.9789664967228deg, #54FFF5 0%, #5488FF 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      //color: linear-gradient(34.9789664967228deg, #54FFF5 0%, #5488FF 100%);;
     }
   }
 
