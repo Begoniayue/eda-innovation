@@ -566,7 +566,6 @@ init()
   color: #888;
 }
 
-/* 不同类型的日志 */
 .info {
   color: #7ec8e3;
 }

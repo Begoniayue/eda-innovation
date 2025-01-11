@@ -22,7 +22,7 @@ const props = defineProps({
   </div>
 </template>
 
-<style lang="less">
+<style scoped lang="less">
 .module-card {
   position: relative;
   background: rgba(255, 255, 255, 0.96);
