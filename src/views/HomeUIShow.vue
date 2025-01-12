@@ -351,17 +351,17 @@ const specHtml = ref(null)
               <div class="progress-item">
                 <div class="title">功能覆盖率</div>
                 <div class="desc">code coverage</div>
-                <TechProgress :progress="100" />
+                <TechProgress :progress="progress" />
               </div>
               <div class="progress-item">
                 <div class="title">行覆盖率</div>
                 <div class="desc"> line coverage</div>
-                <TechProgress :progress="40" />
+                <TechProgress :progress="lineCoverage" />
               </div>
               <div class="progress-item">
                 <div class="title">翻转覆盖率</div>
                 <div class="desc">function coverage</div>
-                <TechProgress :progress="50" />
+                <TechProgress :progress="functionCoverage" />
               </div>
             </div>
           </template>
