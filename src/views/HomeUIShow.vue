@@ -8,6 +8,7 @@ import { appendCode, originalCode } from '@/datas/code'
 import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
 import { createWebSocketClient } from '@/utils/websocket'
 import TechProgress from '@/components/TechProgress.vue'
+import {assertCode, error, specPost} from "@/apis/data";
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
@@ -15,6 +16,7 @@ let decorationsCollection = null
 const answerLanguage = ref('verilog')
 
 onMounted(() => {
+  error()
   answerEditor = monaco.editor.create(ref_answerEditorContainer?.value, {
     value: originalCode,
     language: answerLanguage.value,
@@ -116,20 +118,20 @@ const startIncrement = () => {
   const interval = setInterval(() => {
     // 累加进度条的值
     if (lineCoverage.value < 100) {
-      lineCoverage.value = Math.min(lineCoverage.value + 2, 500)
+      lineCoverage.value = Math.min(lineCoverage.value + 2, 1000)
     }
     if (functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 1, 600)
+      functionCoverage.value = Math.min(functionCoverage.value + 1, 1600)
     }
     if (progress.value < 100) {
-      progress.value = Math.min(progress.value + 10, 200)
+      progress.value = Math.min(progress.value + 10,1200)
     }
 
     // 如果所有进度条都已经到达 100，停止定时器
     if (lineCoverage.value === 100 && functionCoverage.value === 100 && progress.value === 100) {
       clearInterval(interval)
     }
-  }, 100) // 每100毫秒增加一次进度
+  }, 1000)
 }
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
@@ -160,6 +162,8 @@ const reset = () => {
   analyzeAndResultLogMessages.value = []
 }
 const testBuild = () => {
+  testBuildApi()
+  // ws ---log
   // append log
   appendLog({
     info: {
@@ -168,7 +172,7 @@ const testBuild = () => {
     },
     target: 'log'
   })
-  // process start
+  // end 调用
   startIncrement()
 }
 const assertCreate = () => {
@@ -268,6 +272,50 @@ const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
 // Sending a message
 wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
 const specHtml = ref(null)
+// todo 按钮不可以点击 需要添加控制
+const assertFlag = ref(false)
+const emulationFlag = ref(false)
+const analyzeFlag = ref(true)
+const testFlag = ref(false)
+// 测试生成
+const testBuildDate = async () => {
+  const params = {
+    spec: specHtml.value,
+  }
+  try {
+    const response = await specPost(params)
+    if (response.code === 200){
+      console.log(response)
+    }
+  } catch (error) {
+    console.error('请求失败:', error)
+  }
+}
+// 断言生成
+const assertDate = async () => {
+  try {
+    const response = await assertCode()
+    if (response.code === 200){
+      console.log(response)
+    }
+  } catch (error) {
+    console.error('请求失败:', error)
+  }
+}
+// analyer
+const analyse = async () => {
+  // 给出错误代码行 - 分析结果ws
+  try {
+    const response = await error()
+    if (response.code === 200){
+      console.log(response)
+    }
+  } catch (error) {
+    console.error('请求失败:', error)
+  }
+}
+// 修复代码 -----给错误代码+修复代码
+
 </script>
 
 <template>
@@ -339,27 +387,27 @@ const specHtml = ref(null)
         <ModuleCard height="356px">
           <template #title>
             <div class="button-list">
-              <div class="button" @click="testBuild">测试生成</div>
-              <div class="button" @click="assertCreate">断言生成</div>
-              <div class="button" @click="emulation">仿真</div>
-              <div class="button" @click="analyze">分析</div>
-              <div class="button" @click="repairCode">修复</div>
+              <button class="button" @click="testBuild">测试生成</button>
+              <button class="button" @click="assertCreate" :disabled="assertFlag">断言生成</button>
+              <button class="button" @click="emulation">仿真</button>
+              <button class="button" @click="analyze">分析</button>
+              <button class="button" @click="repairCode">修复</button>
             </div>
           </template>
           <template #default>
             <div class="coverage">
               <div class="progress-item">
-                <div class="title">功能覆盖率</div>
-                <div class="desc">code coverage</div>
+                <div class="title">行覆盖率</div>
+                <div class="desc"> line coverage</div>
                 <TechProgress :progress="progress" />
               </div>
               <div class="progress-item">
-                <div class="title">行覆盖率</div>
-                <div class="desc"> line coverage</div>
+                <div class="title">翻转覆盖率</div>
+                <div class="desc">toggle coverage</div>
                 <TechProgress :progress="lineCoverage" />
               </div>
               <div class="progress-item">
-                <div class="title">翻转覆盖率</div>
+                <div class="title">功能覆盖率</div>
                 <div class="desc">function coverage</div>
                 <TechProgress :progress="functionCoverage" />
               </div>

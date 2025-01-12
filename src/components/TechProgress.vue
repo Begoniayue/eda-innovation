@@ -42,7 +42,7 @@ onMounted(() => {
   var option
 
   var _panelImageURL = ROOT_PATH + '/data/asset/img/custom-gauge-panel.png'
-  var _animationDuration = 1000
+  var _animationDuration = 5000
   var _animationDurationUpdate = 1000
   var _animationEasingUpdate = 'quarticInOut'
   var _outerRadius = 200

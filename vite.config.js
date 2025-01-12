@@ -22,6 +22,17 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()]
     })
   ],
+  server: {
+    port: 8080,
+    proxy: {
+      '/api': {
+        // target: 'http://192.168.0.38:6888',// 开发环境
+        target: 'http://10.201.230.232:18766',// 测试环境
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
+  },
   build: {
     rollupOptions: {
       output: {

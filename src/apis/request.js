@@ -74,7 +74,7 @@ export const request = async params => {
   const axiosConfig = {
     headers: { 'Content-Type': 'application/json' },
     timeout: 10000,
-    url: `${import.meta.env.VITE_REQUEST_BASE_URL}${url}`,
+    url: `${url}`,
     method: method.toLowerCase(),
     responseType: responseType.toLowerCase(),
   }
