@@ -258,7 +258,7 @@ const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
 
 // Sending a message
 wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
-const specHtml = ref (null)
+const specHtml = ref(null)
 </script>
 
 <template>
@@ -286,15 +286,8 @@ const specHtml = ref (null)
               @click="reset">
           </template>
           <template #default>
-<!--            <Editor-->
-<!--              v-model="specHtml"-->
-
-<!--            />-->
             <Vditor
               v-model="specHtml"
-              :options="{
-                height: 560, // 高度
-              }"
             />
           </template>
         </ModuleCard>
@@ -302,7 +295,6 @@ const specHtml = ref (null)
         <ModuleCard height="308px">
           <template #title>
             Log
-
           </template>
           <template #default>
             <div class="console-output-section">
@@ -532,7 +524,7 @@ const specHtml = ref (null)
           flex-grow: 1;
           padding: 10px;
           font-family: 'Courier New', monospace;
-          font-size: 14px;
+          font-size: 12px;
           background-color: #fff;
           overflow-y: auto;
         }

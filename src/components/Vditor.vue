@@ -1,36 +1,36 @@
 <script setup>
 
-import Vditor from "vditor";
-import { onMounted, ref, watch, toRaw, onUnmounted } from "vue";
+import Vditor from 'vditor'
+import { onMounted, ref, watch, toRaw, onUnmounted } from 'vue'
 
 const emit = defineEmits([
-  "update:modelValue",
-  "after",
-  "focus",
-  "blur",
-  "esc",
-  "ctrlEnter",
-  "select"
-]);
+  'update:modelValue',
+  'after',
+  'focus',
+  'blur',
+  'esc',
+  'ctrlEnter',
+  'select'
+])
 
 const props = defineProps({
   options: {
     type: Object,
     default() {
-      return {};
+      return {}
     }
   },
   modelValue: {
     type: String,
-    default: ""
+    default: ''
   }
-});
+})
 
-const editor = ref(null);
-const markdownRef = ref(null);
+const editor = ref(null)
+const markdownRef = ref(null)
 
 onMounted(() => {
-  editor.value = new Vditor(markdownRef.value,{
+  editor.value = new Vditor(markdownRef.value, {
     ...props.options,
     value: props.modelValue,
     cache: {
@@ -41,49 +41,52 @@ onMounted(() => {
       index: 10000
     },
     after() {
-      emit("after", toRaw(editor.value));
+      emit('after', toRaw(editor.value))
     },
     input(value) {
-      emit("update:modelValue", value);
+      emit('update:modelValue', value)
     },
     focus(value) {
-      emit("focus", value);
+      emit('focus', value)
     },
     blur(value) {
-      emit("blur", value);
+      emit('blur', value)
     },
     esc(value) {
-      emit("esc", value);
+      emit('esc', value)
     },
     ctrlEnter(value) {
-      emit("ctrlEnter", value);
+      emit('ctrlEnter', value)
     },
     select(value) {
-      emit("select", value);
+      emit('select', value)
     }
-  });
-});
+  })
+})
 
 watch(
   () => props.modelValue,
   newVal => {
     if (newVal !== editor.value?.getValue()) {
-      editor.value?.setValue(newVal);
+      editor.value?.setValue(newVal)
     }
   }
-);
+)
 
 onUnmounted(() => {
-  const editorInstance = editor.value;
-  if (!editorInstance) return;
+  const editorInstance = editor.value
+  if (!editorInstance) return
   try {
-    editorInstance?.destroy?.();
+    editorInstance?.destroy?.()
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-});
+})
 </script>
 
 <template>
-  <div ref="markdownRef" />
+  <div
+    ref="markdownRef"
+    style="border: none;height: 462px"
+  />
 </template>
