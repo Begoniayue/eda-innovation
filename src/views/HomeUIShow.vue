@@ -133,16 +133,16 @@ const startIncrement = () => {
 }
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
-const appendLog = ({ log, target }) => {
+const appendLog = ({ info, target }) => {
   switch (target) {
     case 'log':
-      logMessages.value.push(log)
+      logMessages.value.push(info)
       break
     case 'result':
-      analyzeAndResultLogMessages.value.push(log)
+      analyzeAndResultLogMessages.value.push(info)
       break
     case 'analyze':
-      analyzeAndResultLogMessages.value.push(log)
+      analyzeAndResultLogMessages.value.push(info)
       break
   }
 }
@@ -162,7 +162,7 @@ const reset = () => {
 const testBuild = () => {
   // append log
   appendLog({
-    log: {
+    info: {
       type: 'normal',
       message: testLog
     },
@@ -174,7 +174,7 @@ const testBuild = () => {
 const assertCreate = () => {
   // append log
   appendLog({
-    log: {
+    info: {
       type: 'normal',
       message: assertLog
     },
@@ -187,7 +187,7 @@ const assertCreate = () => {
 const emulation = () => {
   if (!repairButtonClicked.value) {
     appendLog({
-      log: {
+      info: {
         type: 'error',
         message: emulationLog1
       },
@@ -195,7 +195,7 @@ const emulation = () => {
     })
     setTimeout(() => {
       appendLog({
-        log: {
+        info: {
           type: 'error',
           message: emulationLog2
         },
@@ -207,7 +207,7 @@ const emulation = () => {
   // after fix button clear result log and append success info
   analyzeAndResultLogMessages.value = []
   appendLog({
-    log: {
+    info: {
       type: 'success',
       message: 'Success!'
     },
@@ -217,7 +217,7 @@ const emulation = () => {
 const analyze = () => {
   // append analyzer log
   appendLog({
-    log: {
+    info: {
       type: 'normal',
       message: analyzeLog
     },
@@ -250,7 +250,17 @@ watch(answerLanguage, (value) => {
 init()
 const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
   onOpen: () => console.log('Connection established.'),
-  onMessage: (data) => console.log('Received message:', data),
+  onMessage: (data) => {
+    console.log('Received message:', data)
+    try {
+      const json = JSON.parse(data)
+      if (json.target) {
+        appendLog(json)
+      }
+    } catch (e) {
+      console.log('Error parsing JSON:', e)
+    }
+  },
   onError: (error) => console.error('Error occurred:', error),
   onClose: (event) => console.log('Connection closed.', event)
 })
