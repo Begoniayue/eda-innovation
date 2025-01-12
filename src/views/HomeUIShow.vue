@@ -2,13 +2,12 @@
 import { onMounted, ref, watch } from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
-import CircularProgress from '@/components/CircularProgress.vue'
-import Editor from '@/components/Editor.vue'
 import Vditor from '@/components/Vditor.vue'
 import ModuleCard from '@/components/ModuleCard.vue'
 import { appendCode, originalCode } from '@/datas/code'
 import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
 import { createWebSocketClient } from '@/utils/websocket'
+import TechProgress from '@/components/TechProgress.vue'
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
@@ -342,17 +341,17 @@ const specHtml = ref(null)
               <div class="progress-item">
                 <div class="title">功能覆盖率</div>
                 <div class="desc">code coverage</div>
-                <CircularProgress :progress="progress" />
+                <TechProgress :progress="100" />
               </div>
               <div class="progress-item">
                 <div class="title">行覆盖率</div>
                 <div class="desc"> line coverage</div>
-                <CircularProgress :progress="lineCoverage" />
+                <TechProgress :progress="40" />
               </div>
               <div class="progress-item">
                 <div class="title">翻转覆盖率</div>
                 <div class="desc">function coverage</div>
-                <CircularProgress :progress="functionCoverage" />
+                <TechProgress :progress="50" />
               </div>
             </div>
           </template>
@@ -492,9 +491,11 @@ const specHtml = ref(null)
         display: flex;
         justify-content: space-around;
         margin-top: 47px;
+        position: relative;
 
 
         .progress-item {
+          position: relative;
           color: #333333;
           display: flex;
           align-items: center;
