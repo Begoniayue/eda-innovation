@@ -4,7 +4,6 @@ import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import Vditor from '@/components/Vditor.vue'
 import ModuleCard from '@/components/ModuleCard.vue'
-import { appendCode, originalCode } from '@/datas/code'
 import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
 import { createWebSocketClient } from '@/utils/websocket'
 import TechProgress from '@/components/TechProgress.vue'
@@ -16,9 +15,7 @@ let decorationsCollection = null
 const answerLanguage = ref('verilog')
 
 onMounted(() => {
-  error()
   answerEditor = monaco.editor.create(ref_answerEditorContainer?.value, {
-    value: originalCode,
     language: answerLanguage.value,
     theme: 'vs-light',
     automaticLayout: true,
@@ -38,7 +35,16 @@ const setHighLightStyle = () => {
 `
   document.head.appendChild(style)
 }
-const appendCodeLine = () => {
+const appendCodeLine = async () => {
+  let appendCode = '';
+  try {
+    const response = await assertCode();
+    if (response.code === 200) {
+      appendCode = response.data.assert;
+    }
+  } catch (error) {
+    return;
+  }
   const model = answerEditor.getModel()
   const lastLine = model.getLineCount() // 获取最后一行的行号
   // 将新的一行代码追加到编辑器内容
@@ -51,6 +57,8 @@ const appendCodeLine = () => {
   ])
   // 滚动到最后一行
   answerEditor.revealLine(lastLine + 1)
+  assertFlag.value = true
+  emulationFlag.value = false
 }
 const deleteCodeLine = (lineNumber) => {
   const model = answerEditor.getModel() // 获取模型
@@ -88,6 +96,8 @@ const replaceCodeLine = (lineNumber, newContent) => {
       className: 'highlight-success-line'
     }
   }])
+  repairFlag.value = true
+  emulationFlag.value = false
 }
 const clearHighLight = () => {
   if (!decorationsCollection) {
@@ -95,17 +105,29 @@ const clearHighLight = () => {
   }
   decorationsCollection.clear()
 }
-const setHighLight = (options) => {
+const setHighLight = async (options) => {
+  let errorCode
   if (!decorationsCollection) {
     return
   }
-  decorationsCollection.set([{
-    range: new monaco.Range(113, 1, 113, 1),
+  try {
+    const response = await error()
+    if (response.code === 200) {
+      errorCode = response.data?.error_code
+    }
+  } catch (error) {
+  }
+  const decorations = errorCode.map(([startLineNumber, startColumn, endLineNumber, endColumn]) => ({
+    range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
     options: {
       isWholeLine: true,
       className: 'highlight-error-line'
     }
-  }])
+  }));
+
+  decorationsCollection.set(decorations);
+  analyzeFlag.value = true
+  repairFlag.value = false
 }
 const init = () => {
   setHighLightStyle()
@@ -118,21 +140,32 @@ const startIncrement = () => {
   const interval = setInterval(() => {
     // 累加进度条的值
     if (lineCoverage.value < 100) {
-      lineCoverage.value = Math.min(lineCoverage.value + 2, 1000)
+      lineCoverage.value = Math.min(lineCoverage.value + 2, 100)
     }
-    if (functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 1, 1600)
+
+    // 判断 assertFlag，只有 assertFlag 为 false 时，functionCoverage 不能达到 100
+    if (!assertFlag.value && functionCoverage.value < 100) {
+      functionCoverage.value = Math.min(functionCoverage.value + 1, 99)  // 限制 functionCoverage 在 99 以内
+    } else if (assertFlag.value && functionCoverage.value < 100) {
+      functionCoverage.value = Math.min(functionCoverage.value + 1, 100)  // 当 assertFlag 为 true 时，可以增加到 100
     }
+
     if (progress.value < 100) {
-      progress.value = Math.min(progress.value + 10,1200)
+      progress.value = Math.min(progress.value + 10, 100)
     }
 
     // 如果所有进度条都已经到达 100，停止定时器
-    if (lineCoverage.value === 100 && functionCoverage.value === 100 && progress.value === 100) {
+    if (lineCoverage.value === 100 && progress.value === 100) {
+      clearInterval(interval)
+    }
+
+    // 如果 assertFlag 为 true，且 functionCoverage 达到 100，清除定时器
+    if (assertFlag.value && functionCoverage.value === 100) {
       clearInterval(interval)
     }
   }, 1000)
 }
+
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
 const appendLog = ({ info, target }) => {
@@ -160,11 +193,14 @@ const reset = () => {
   lineCoverage.value = 0
   // clear result and analyzer log
   analyzeAndResultLogMessages.value = []
+  testFlag.value = false
+  assertFlag.value = true
+  repairFlag.value = true
+  analyzeFlag.value = true
+  emulationFlag.value = true
 }
 const testBuild = () => {
-  testBuildApi()
-  // ws ---log
-  // append log
+  testBuildDate()
   appendLog({
     info: {
       type: 'normal',
@@ -172,10 +208,15 @@ const testBuild = () => {
     },
     target: 'log'
   })
-  // end 调用
+  // todo 结束之后flag为false
+  assertFlag.value = false
+  testFlag.value = true
+  // if ('end') {
+  //   assertFlag.value = false
+  // }
   startIncrement()
 }
-const assertCreate = () => {
+const assertCreate = async () => {
   // append log
   appendLog({
     info: {
@@ -184,6 +225,7 @@ const assertCreate = () => {
     },
     target: 'log'
   })
+  // todo end
   // append code in code input
   deleteCodeLine(answerEditor.getModel().getLineCount())
   appendCodeLine()
@@ -206,6 +248,10 @@ const emulation = () => {
         target: 'result'
       })
     }, 2000)
+    // todo end
+    emulationFlag.value = true
+    analyzeFlag.value = false
+    // todo end 结束判断
     return
   }
   // after fix button clear result log and append success info
@@ -217,6 +263,9 @@ const emulation = () => {
     },
     target: 'result'
   })
+
+  // todo 第二次结束之后
+  // emulationFlag.value = true
 }
 const analyze = () => {
   // append analyzer log
@@ -228,13 +277,22 @@ const analyze = () => {
     target: 'analyze'
   })
   // error code highlight
+  // todo end
   setHighLight()
 }
 const repairButtonClicked = ref(false)
 const repairCode = () => {
   repairButtonClicked.value = true
   // fix error line
-  replaceCodeLine(113, '    pmp5cfg readable       <= 11\'b0;')
+
+  // todo 多行修复
+  const replacements = [
+    { lineNumber: 113, text: 'pmp5cfg readable <= 11\'b0;' },
+    { lineNumber: 114, text: 'pmp5cfg writable <= 11\'b0;' },
+    { lineNumber: 115, text: 'pmp5cfg executable <= 11\'b0;' }
+  ];
+
+  replaceCodeLine(replacements);
 }
 const mainContent = ref(null)
 const isVisible = ref(true)
@@ -255,66 +313,44 @@ init()
 const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => {
-    console.log('Received message:', data)
+    // console.log('Received message:', data)
     try {
       const json = JSON.parse(data)
       if (json.target) {
         appendLog(json)
       }
     } catch (e) {
-      console.log('Error parsing JSON:', e)
+      // console.log('Error parsing JSON:', e)
     }
   },
-  onError: (error) => console.error('Error occurred:', error),
-  onClose: (event) => console.log('Connection closed.', event)
+  // onError: (error) => console.error('Error occurred:', error),
+  // onClose: (event) => console.log('Connection closed.', event)
 })
 
 // Sending a message
 wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
 const specHtml = ref(null)
-// todo 按钮不可以点击 需要添加控制
-const assertFlag = ref(false)
-const emulationFlag = ref(false)
-const analyzeFlag = ref(true)
+
 const testFlag = ref(false)
+const assertFlag = ref(true)
+const emulationFlag = ref(true)
+const analyzeFlag = ref(true)
+const repairFlag  = ref(true)
 // 测试生成
 const testBuildDate = async () => {
   const params = {
     spec: specHtml.value,
+    code: answerEditor.getValue()
   }
   try {
     const response = await specPost(params)
     if (response.code === 200){
-      console.log(response)
+
     }
   } catch (error) {
     console.error('请求失败:', error)
   }
 }
-// 断言生成
-const assertDate = async () => {
-  try {
-    const response = await assertCode()
-    if (response.code === 200){
-      console.log(response)
-    }
-  } catch (error) {
-    console.error('请求失败:', error)
-  }
-}
-// analyer
-const analyse = async () => {
-  // 给出错误代码行 - 分析结果ws
-  try {
-    const response = await error()
-    if (response.code === 200){
-      console.log(response)
-    }
-  } catch (error) {
-    console.error('请求失败:', error)
-  }
-}
-// 修复代码 -----给错误代码+修复代码
 
 </script>
 
@@ -345,6 +381,14 @@ const analyse = async () => {
           <template #default>
             <Vditor
               v-model="specHtml"
+              :height="520"
+              :value="specHtml"
+              :options="{
+                height: 520,
+                cache: {
+                  enable: false
+                }
+              }"
             />
           </template>
         </ModuleCard>
@@ -387,11 +431,11 @@ const analyse = async () => {
         <ModuleCard height="356px">
           <template #title>
             <div class="button-list">
-              <button class="button" @click="testBuild">测试生成</button>
+              <button class="button" @click="testBuild" :disabled="testFlag">测试生成</button>
               <button class="button" @click="assertCreate" :disabled="assertFlag">断言生成</button>
-              <button class="button" @click="emulation">仿真</button>
-              <button class="button" @click="analyze">分析</button>
-              <button class="button" @click="repairCode">修复</button>
+              <button class="button" @click="emulation" :disabled="emulationFlag">仿真</button>
+              <button class="button" @click="analyze" :disabled="analyzeFlag">分析</button>
+              <button class="button" @click="repairCode" :disabled="repairFlag">修复</button>
             </div>
           </template>
           <template #default>
@@ -528,12 +572,17 @@ const analyse = async () => {
           align-items: center;
           justify-content: center;
           cursor: pointer;
+          border: none;
+          &:disabled {
+            cursor: not-allowed;
+            opacity: .6;
+          }
         }
 
         .button:hover {
-          background-color: #1677ff;
-          border-color: #ffffff;
-          color: #ffffff;
+          color: #1990FB;
+          background: #E5F1FF;
+          border-radius: 8px;
         }
 
         /* 鼠标点击时 */

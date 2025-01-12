@@ -1,4 +1,4 @@
-import { request } from '@/apis/request'
+import {request} from '@/apis/request'
 
 /**
  * 示例调用方法
@@ -12,11 +12,8 @@ export const specPost = async (data) => {
       method: 'POST',
       data,
     }
-    const response = await request(params)
-    console.log('API 调用成功:', response)
-    return response
+    return await request(params)
   } catch (error) {
-    console.error('API 调用失败:', error.message)
     throw error
   }
 }
@@ -30,11 +27,8 @@ export const assertCode = async (data) => {
       requestType: 'string',
       responseType: 'json',
     }
-    const response = await request(params)
-    console.log('API 调用成功:', response)
-    return response
+    return await request(params)
   } catch (error) {
-    console.error('API 调用失败:', error.message)
     throw error
   }
 }
@@ -48,12 +42,25 @@ export const error = async (data) => {
       requestType: 'string',
       responseType: 'json',
     }
-    const response = await request(params)
-    console.log('API 调用成功:', response)
-    return response
+    return await request(params)
   } catch (error) {
-    console.error('API 调用失败:', error.message)
     throw error
   }
 }
+export const compair = async (data) => {
+  try {
+    // 准备请求参数
+    const params = {
+      url: '/api/compair',
+      method: 'GET',
+      data,
+      requestType: 'string',
+      responseType: 'json',
+    }
+    return await request(params)
+  } catch (error) {
+    throw error
+  }
+}
+
 
