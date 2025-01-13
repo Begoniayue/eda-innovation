@@ -95,7 +95,7 @@ const setHighLight = async (options) => {
   try {
     const response = await error()
     if (response.code === 200) {
-      errorCode = [[114, 1, 114, 1]]
+      errorCode = [[114, 1, 114, 1],[145,1,167,1]]
       // errorCode = response.data?.error_code
     }
   } catch (error) {
@@ -283,6 +283,7 @@ const repairCode = () => {
 
   const replacements = [
     {lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;"},
+    {lineNumber: 125, text: "pmp5cfg_readable <= 11'b0;"},
   ];
 
   const model = answerEditor.getModel(); // 获取模型
