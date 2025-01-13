@@ -322,6 +322,18 @@ const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
       if (json.target) {
         appendLog(json)
       }
+      // if (json.target?.info === 'end') {
+      //   switch (json.target?.type) {
+      //     case 'test':
+      //       break
+      //     case 'result':
+      //
+      //       break
+      //     case 'analyze':
+      //
+      //       break
+      //   }
+      // }
     } catch (e) {
       // console.log('Error parsing JSON:', e)
     }
