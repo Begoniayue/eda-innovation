@@ -128,9 +128,9 @@ const startIncrement = () => {
 
     // 判断 assertFlag，只有 assertFlag 为 false 时，functionCoverage 不能达到 100
     if (!assertFlag.value && functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 5, 99)  // 限制 functionCoverage 在 99 以内
+      functionCoverage.value = Math.min(functionCoverage.value + 5, 100)  // 限制 functionCoverage 在 99 以内
     } else if (assertFlag.value && functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 10, 100)  // 当 assertFlag 为 true 时，可以增加到 100
+      functionCoverage.value = Math.min(functionCoverage.value + 10, 99)  // 当 assertFlag 为 true 时，可以增加到 100
     }
 
     if (progress.value < 100) {
@@ -151,16 +151,20 @@ const startIncrement = () => {
 
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
-const appendLog = ({info, target}) => {
-  switch (target) {
+const appendLog = (info, type) => {
+  console.log(info, type,'234')
+  switch (type) {
     case 'log':
-      logMessages.value.push(info)
+      logMessages.value.push(info.data)
       break
     case 'result':
-      analyzeAndResultLogMessages.value.push(info)
+      analyzeAndResultLogMessages.value.push(info.data)
       break
     case 'analyze':
-      analyzeAndResultLogMessages.value.push(info)
+      analyzeAndResultLogMessages.value.push(info.data)
+      break
+    case 'stats':
+      analyzeAndResultLogMessages.value.push(info.data)
       break
   }
 }
@@ -198,12 +202,6 @@ const testBuild = () => {
     },
     target: 'analyze'
   })
-  // todo 结束之后flag为false
-  assertFlag.value = false
-  testFlag.value = true
-  // if ('end') {
-  //   assertFlag.value = false
-  // }
   startIncrement()
 }
 const assertCreate = async () => {
@@ -222,10 +220,6 @@ const assertCreate = async () => {
     },
     target: 'analyze'
   })
-  // todo end
-  // append code in code input
-  deleteCodeLine(answerEditor.getModel().getLineCount())
-  appendCodeLine()
 }
 const emulation = () => {
   if (!repairButtonClicked.value) {
@@ -245,10 +239,7 @@ const emulation = () => {
         target: 'result'
       })
     }, 2000)
-    // todo end
-    emulationFlag.value = true
-    analyzeFlag.value = false
-    // todo end 结束判断
+
     return
   }
   // after fix button clear result log and append success info
@@ -260,9 +251,6 @@ const emulation = () => {
     },
     target: 'result'
   })
-
-  // todo 第二次结束之后
-  // emulationFlag.value = true
 }
 const analyze = () => {
   // append analyzer log
@@ -273,9 +261,7 @@ const analyze = () => {
     },
     target: 'analyze'
   })
-  // error code highlight
-  // todo end
-  setHighLight()
+
 }
 const repairButtonClicked = ref(false)
 const repairCode = () => {
@@ -309,9 +295,6 @@ const repairCode = () => {
 
   model.applyEdits(edits);
   decorationsCollection.set(decorations);
-
-  repairFlag.value = true;
-  emulationFlag.value = false;
 }
 const mainContent = ref(null)
 const isVisible = ref(true)
@@ -332,27 +315,20 @@ init()
 const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => {
-    console.log('Received message:', data)
+    console.log(data, 'data')
+
     try {
-      const json = JSON.parse(data)
-      console.log(json, 'json')
-      if (json.target) {
-        appendLog(json)
+      const json = JSON.parse(data);
+      console.log(json, 'parsed data', json.type);
+      if (json.type) {
+        appendLog(json, json.type);
+        if (json.isEnd) {
+          todoEnd(json.stage)
+        }
       }
-      // if (json.target?.info === 'end') {
-      //   switch (json.target?.type) {
-      //     case 'test':
-      //       break
-      //     case 'result':
-      //
-      //       break
-      //     case 'analyze':
-      //
-      //       break
-      //   }
-      // }
     } catch (e) {
-      // console.log('Error parsing JSON:', e)
+      console.log('Error parsing JSON:', e);
+      console.log('Original data:', data); // 打印原始数据以便调试
     }
   },
   onError: (error) => console.error('Error occurred:', error),
@@ -382,6 +358,30 @@ const testBuildDate = async () => {
   } catch (error) {
     console.error('请求失败:', error)
   }
+}
+const todoEnd = (stage) => {
+  switch (stage) {
+    case 'test':
+      assertFlag.value = false
+      testFlag.value = true
+      break
+    case 'assert':
+      deleteCodeLine(answerEditor.getModel().getLineCount())
+      appendCodeLine()
+      break
+    case 'emulation':
+      emulationFlag.value = true
+      analyzeFlag.value = false
+      break
+    case 'analyze':
+      setHighLight()
+      break
+    case 'repairCode':
+      repairFlag.value = true;
+      emulationFlag.value = false;
+      break
+  }
+
 }
 
 </script>
@@ -437,7 +437,7 @@ const testBuildDate = async () => {
             <div class="console-output-section">
               <div class="console-output" v-auto-scroll>
                 <template v-if="logMessages.length>0">
-                  <div v-for="(log, index) in logMessages" :key="index" :class="log.type">
+                  <div v-for="(log, index) in logMessages" :key="index" :class="log.status">
                     {{ log.message }}
                   </div>
                 </template>
@@ -503,7 +503,7 @@ const testBuildDate = async () => {
             <div class="console-output-section">
               <div class="console-output" v-auto-scroll>
                 <template v-if="analyzeAndResultLogMessages.length>0">
-                  <div v-for="(log, index) in analyzeAndResultLogMessages" :key="index" :class="log.type">
+                  <div v-for="(log, index) in analyzeAndResultLogMessages" :key="index" :class="log.status">
                     {{ log.message }}
                   </div>
                 </template>
