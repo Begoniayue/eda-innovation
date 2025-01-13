@@ -92,7 +92,8 @@ const setHighLight = async (options) => {
   try {
     const response = await error()
     if (response.code === 200) {
-      errorCode = response.data?.error_code
+      errorCode = [[113, 1, 113, 1]]
+      // errorCode = response.data?.error_code
     }
   } catch (error) {
   }
@@ -264,9 +265,7 @@ const repairCode = () => {
   repairButtonClicked.value = true;
 
   const replacements = [
-    { lineNumber: 113, text: 'pmp5cfg readable <= 11\'b0;' },
-    { lineNumber: 114, text: 'pmp5cfg writable <= 11\'b0;' },
-    { lineNumber: 115, text: 'pmp5cfg executable <= 11\'b0;' }
+    { lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;" },
   ];
 
   const model = answerEditor.getModel(); // 获取模型
@@ -316,9 +315,10 @@ init()
 const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => {
-    // console.log('Received message:', data)
+    console.log('Received message:', data)
     try {
       const json = JSON.parse(data)
+      console.log(json, 'json')
       if (json.target) {
         appendLog(json)
       }
@@ -338,8 +338,8 @@ const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
       // console.log('Error parsing JSON:', e)
     }
   },
-  // onError: (error) => console.error('Error occurred:', error),
-  // onClose: (event) => console.log('Connection closed.', event)
+  onError: (error) => console.error('Error occurred:', error),
+  onClose: (event) => console.log('Connection closed.', event)
 })
 
 // Sending a message
