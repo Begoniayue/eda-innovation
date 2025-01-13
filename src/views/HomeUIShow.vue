@@ -19,7 +19,10 @@ onMounted(() => {
     language: answerLanguage.value,
     theme: 'vs-light',
     automaticLayout: true,
-    lineNumbers: 'on'
+    lineNumbers: 'on',
+    minimap: { enabled: false },
+    overviewRulerLanes: 0, // 移除右侧 Overview Ruler 的标记
+    overviewRulerBorder: false, // 移除 Overview Ruler 的边框
   })
   decorationsCollection = answerEditor.createDecorationsCollection()
 })

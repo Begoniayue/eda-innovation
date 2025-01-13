@@ -27,16 +27,16 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
 
       socket.onopen = (event) => {
         console.log('WebSocket connection opened:', event)
-        resetReconnectAttempts()
+        // resetReconnectAttempts()
         settings.onOpen(event)
         startHeartbeat()
       }
 
       socket.onmessage = (event) => {
         settings.onMessage(event.data)
-        if (isHeartbeatResponse(event.data)) {
-          resetHeartbeatTimeout()
-        }
+        // if (isHeartbeatResponse(event.data)) {
+        //   resetHeartbeatTimeout()
+        // }
       }
 
       socket.onerror = (error) => {
@@ -50,12 +50,12 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
         settings.onClose(event)
 
         // Attempt to reconnect if not closed intentionally
-        if (!event.wasClean && getReconnectAttempts() < settings.maxReconnectAttempts) {
-          setTimeout(() => {
-            incrementReconnectAttempts()
-            connect()
-          }, settings.reconnectInterval)
-        }
+        // if (!event.wasClean && getReconnectAttempts() < settings.maxReconnectAttempts) {
+        //   setTimeout(() => {
+        //     incrementReconnectAttempts()
+        //     connect()
+        //   }, settings.reconnectInterval)
+        // }
       }
     } catch (err) {
       console.error('Failed to create WebSocket:', err)
@@ -89,13 +89,13 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
 
   function stopHeartbeat() {
     clearInterval(heartbeatTimer)
-    clearTimeout(heartbeatTimeoutTimer)
+    // clearTimeout(heartbeatTimeoutTimer)
   }
 
   function sendHeartbeat() {
     const heartbeatMessage = JSON.stringify({ type: 'heartbeat' })
     socket.send(heartbeatMessage)
-    setHeartbeatTimeout()
+    // setHeartbeatTimeout()
   }
 
   function setHeartbeatTimeout() {
