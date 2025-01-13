@@ -27,7 +27,7 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
 
       socket.onopen = (event) => {
         console.log('WebSocket connection opened:', event)
-        // resetReconnectAttempts()
+        resetReconnectAttempts()
         settings.onOpen(event)
         startHeartbeat()
       }
@@ -50,12 +50,12 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
         settings.onClose(event)
 
         // Attempt to reconnect if not closed intentionally
-        // if (!event.wasClean && getReconnectAttempts() < settings.maxReconnectAttempts) {
-        //   setTimeout(() => {
-        //     incrementReconnectAttempts()
-        //     connect()
-        //   }, settings.reconnectInterval)
-        // }
+        if (!event.wasClean && getReconnectAttempts() < settings.maxReconnectAttempts) {
+          setTimeout(() => {
+            incrementReconnectAttempts()
+            connect()
+          }, settings.reconnectInterval)
+        }
       }
     } catch (err) {
       console.error('Failed to create WebSocket:', err)
@@ -101,7 +101,7 @@ export const createWebSocketClient = (url, protocols = [], options = {}) => {
   function setHeartbeatTimeout() {
     heartbeatTimeoutTimer = setTimeout(() => {
       console.warn('Heartbeat timeout detected. Closing connection.')
-      // close(1006, 'Heartbeat timeout') // Close with a specific code indicating heartbeat failure
+      close(1006, 'Heartbeat timeout') // Close with a specific code indicating heartbeat failure
     }, settings.heartbeatTimeout)
   }
 
