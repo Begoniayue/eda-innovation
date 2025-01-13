@@ -1,11 +1,11 @@
 <script setup>
-import { onMounted, ref, watch } from 'vue'
+import {onMounted, ref, watch} from 'vue'
 import * as monaco from 'monaco-editor'
 import LanguageSelector from '@/components/LanguageSelector.vue'
 import Vditor from '@/components/Vditor.vue'
 import ModuleCard from '@/components/ModuleCard.vue'
-import { testLog, assertLog, emulationLog1, emulationLog2, analyzeLog } from '@/datas/logs'
-import { createWebSocketClient } from '@/utils/websocket'
+import {testLog, assertLog, emulationLog1, emulationLog2, analyzeLog} from '@/datas/logs'
+import {createWebSocketClient} from '@/utils/websocket'
 import TechProgress from '@/components/TechProgress.vue'
 import {assertCode, error, specPost} from "@/apis/data";
 
@@ -20,7 +20,7 @@ onMounted(() => {
     theme: 'vs-light',
     automaticLayout: true,
     lineNumbers: 'on',
-    minimap: { enabled: false },
+    minimap: {enabled: false},
     overviewRulerLanes: 0, // 移除右侧 Overview Ruler 的标记
     overviewRulerBorder: false, // 移除 Overview Ruler 的边框
   })
@@ -123,18 +123,18 @@ const startIncrement = () => {
   const interval = setInterval(() => {
     // 累加进度条的值
     if (lineCoverage.value < 100) {
-      lineCoverage.value = Math.min(lineCoverage.value + 2, 100)
+      lineCoverage.value = Math.min(lineCoverage.value + 10, 100)
     }
 
     // 判断 assertFlag，只有 assertFlag 为 false 时，functionCoverage 不能达到 100
     if (!assertFlag.value && functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 1, 99)  // 限制 functionCoverage 在 99 以内
+      functionCoverage.value = Math.min(functionCoverage.value + 5, 99)  // 限制 functionCoverage 在 99 以内
     } else if (assertFlag.value && functionCoverage.value < 100) {
-      functionCoverage.value = Math.min(functionCoverage.value + 1, 100)  // 当 assertFlag 为 true 时，可以增加到 100
+      functionCoverage.value = Math.min(functionCoverage.value + 10, 100)  // 当 assertFlag 为 true 时，可以增加到 100
     }
 
     if (progress.value < 100) {
-      progress.value = Math.min(progress.value + 10, 100)
+      progress.value = Math.min(progress.value + 20, 100)
     }
 
     // 如果所有进度条都已经到达 100，停止定时器
@@ -151,7 +151,7 @@ const startIncrement = () => {
 
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
-const appendLog = ({ info, target }) => {
+const appendLog = ({info, target}) => {
   switch (target) {
     case 'log':
       logMessages.value.push(info)
@@ -191,6 +191,13 @@ const testBuild = () => {
     },
     target: 'log'
   })
+  appendLog({
+    info: {
+      type: 'normal',
+      message: '通过一轮迭代，iDebug生成了9组测试，实现全覆盖率'
+    },
+    target: 'analyze'
+  })
   // todo 结束之后flag为false
   assertFlag.value = false
   testFlag.value = true
@@ -207,6 +214,13 @@ const assertCreate = async () => {
       message: assertLog
     },
     target: 'log'
+  })
+  appendLog({
+    info: {
+      type: 'normal',
+      message: 'iDebug生成了33条Verilog断言'
+    },
+    target: 'analyze'
   })
   // todo end
   // append code in code input
@@ -268,12 +282,12 @@ const repairCode = () => {
   repairButtonClicked.value = true;
 
   const replacements = [
-    { lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;" },
+    {lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;"},
   ];
 
   const model = answerEditor.getModel(); // 获取模型
 
-  const edits = replacements.map(({ lineNumber, text }) => {
+  const edits = replacements.map(({lineNumber, text}) => {
     const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
     return {
       range,
@@ -282,7 +296,7 @@ const repairCode = () => {
     };
   });
 
-  const decorations = replacements.map(({ lineNumber, text }) => {
+  const decorations = replacements.map(({lineNumber, text}) => {
     const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
     return {
       range,
@@ -304,7 +318,7 @@ const isVisible = ref(true)
 
 const domScroll = () => {
   if (mainContent.value) {
-    mainContent.value.scrollIntoView({ behavior: 'smooth' })
+    mainContent.value.scrollIntoView({behavior: 'smooth'})
     setTimeout(() => {
       isVisible.value = false
     }, 1000) // 1秒后隐藏元素，可以根据需要调整时间
@@ -346,14 +360,14 @@ const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
 })
 
 // Sending a message
-wsClient.send(JSON.stringify({ type: 'greeting', content: 'Hello Server!' }))
+wsClient.send(JSON.stringify({type: 'greeting', content: 'Hello Server!'}))
 const specHtml = ref(null)
 
 const testFlag = ref(false)
 const assertFlag = ref(true)
 const emulationFlag = ref(true)
 const analyzeFlag = ref(true)
-const repairFlag  = ref(true)
+const repairFlag = ref(true)
 // 测试生成
 const testBuildDate = async () => {
   const params = {
@@ -362,7 +376,7 @@ const testBuildDate = async () => {
   }
   try {
     const response = await specPost(params)
-    if (response.code === 200){
+    if (response.code === 200) {
 
     }
   } catch (error) {
@@ -376,10 +390,10 @@ const testBuildDate = async () => {
   <div class="app">
     <div class="app-header">
       <div class="logo">
-        <img src="https://www.nctieda.com/images/logo1.png" alt="" style="width: 400px" />
+        <img src="https://www.nctieda.com/images/logo1.png" alt="" style="width: 400px"/>
       </div>
       <div class="title">
-        <img class="logo" src="../assets/images/debug-log.png" alt="" width="50" />
+        <img class="logo" src="../assets/images/debug-log.png" alt="" width="50"/>
         欢迎来到iDebug，有什么可以帮忙的？
       </div>
     </div>
@@ -388,7 +402,8 @@ const testBuildDate = async () => {
       <div class="try-button" @click="domScroll">
         <div class="try-button-text">
           立即体验
-      </div></div>
+        </div>
+      </div>
     </div>
     <div class="main-content" ref="mainContent">
       <div class="item">
@@ -441,7 +456,7 @@ const testBuildDate = async () => {
               src="../assets/images/refresh-icon.png" style="width: 16px;height: 16px;margin-left: 16px" alt=""
               @click="reset"
             >&nbsp;&nbsp;
-            <LanguageSelector v-model="answerLanguage" />
+            <LanguageSelector v-model="answerLanguage"/>
           </template>
           <template #default>
             <div ref="ref_answerEditorContainer" class="monaco-editor"></div>
@@ -464,17 +479,17 @@ const testBuildDate = async () => {
               <div class="progress-item">
                 <div class="title">行覆盖率</div>
                 <div class="desc"> line coverage</div>
-                <TechProgress :progress="progress" />
+                <TechProgress :progress="progress"/>
               </div>
               <div class="progress-item">
                 <div class="title">翻转覆盖率</div>
                 <div class="desc">toggle coverage</div>
-                <TechProgress :progress="lineCoverage" />
+                <TechProgress :progress="lineCoverage"/>
               </div>
               <div class="progress-item">
                 <div class="title">功能覆盖率</div>
                 <div class="desc">function coverage</div>
-                <TechProgress :progress="functionCoverage" />
+                <TechProgress :progress="functionCoverage"/>
               </div>
             </div>
           </template>
@@ -561,6 +576,7 @@ const testBuildDate = async () => {
       justify-content: center;
       font-weight: 500;
       font-size: 22px;
+
       .try-button-text {
         background: linear-gradient(34.9789664967228deg, #54FFF5 0%, #5488FF 100%);
         -webkit-background-clip: text;
@@ -596,6 +612,7 @@ const testBuildDate = async () => {
           justify-content: center;
           cursor: pointer;
           border: none;
+
           &:disabled {
             cursor: not-allowed;
             opacity: .6;
