@@ -76,28 +76,7 @@ const deleteCodeLine = (lineNumber) => {
   ])
 }
 const replaceCodeLine = (lineNumber, newContent) => {
-  const model = answerEditor.getModel() // 获取模型
 
-  // 获取指定行的范围
-  const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber))
-
-  // 替换指定行的代码
-  model.applyEdits([
-    {
-      range,
-      text: newContent,
-      forceMoveMarkers: true
-    }
-  ])
-  decorationsCollection.set([{
-    range,
-    options: {
-      isWholeLine: true,
-      className: 'highlight-success-line'
-    }
-  }])
-  repairFlag.value = true
-  emulationFlag.value = false
 }
 const clearHighLight = () => {
   if (!decorationsCollection) {
@@ -282,17 +261,41 @@ const analyze = () => {
 }
 const repairButtonClicked = ref(false)
 const repairCode = () => {
-  repairButtonClicked.value = true
-  // fix error line
+  repairButtonClicked.value = true;
 
-  // todo 多行修复
   const replacements = [
     { lineNumber: 113, text: 'pmp5cfg readable <= 11\'b0;' },
     { lineNumber: 114, text: 'pmp5cfg writable <= 11\'b0;' },
     { lineNumber: 115, text: 'pmp5cfg executable <= 11\'b0;' }
   ];
 
-  replaceCodeLine(replacements);
+  const model = answerEditor.getModel(); // 获取模型
+
+  const edits = replacements.map(({ lineNumber, text }) => {
+    const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
+    return {
+      range,
+      text,
+      forceMoveMarkers: true
+    };
+  });
+
+  const decorations = replacements.map(({ lineNumber, text }) => {
+    const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
+    return {
+      range,
+      options: {
+        isWholeLine: true,
+        className: 'highlight-success-line'
+      }
+    };
+  });
+
+  model.applyEdits(edits);
+  decorationsCollection.set(decorations);
+
+  repairFlag.value = true;
+  emulationFlag.value = false;
 }
 const mainContent = ref(null)
 const isVisible = ref(true)
