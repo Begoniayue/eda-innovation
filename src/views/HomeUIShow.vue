@@ -95,7 +95,7 @@ const setHighLight = async (options) => {
   try {
     const response = await error()
     if (response.code === 200) {
-      errorCode = [[113, 1, 113, 1]]
+      errorCode = [[114, 1, 114, 1]]
       // errorCode = response.data?.error_code
     }
   } catch (error) {
