@@ -313,7 +313,7 @@ watch(answerLanguage, (value) => {
   answerEditor.setModel(monaco.editor.createModel('', value))
 })
 init()
-const wsClient = createWebSocketClient('ws://10.201.230.232:18765', [], {
+const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => {
     // console.log('Received message:', data)
@@ -382,7 +382,10 @@ const testBuildDate = async () => {
     </div>
     <div class="app-banner" v-if="isVisible">
       <img src="../assets/images/welcome.png" alt="" width="609" style="margin-top: 106px">
-      <div class="try-button" @click="domScroll">立即体验</div>
+      <div class="try-button" @click="domScroll">
+        <div class="try-button-text">
+          立即体验
+      </div></div>
     </div>
     <div class="main-content" ref="mainContent">
       <div class="item">
@@ -555,9 +558,11 @@ const testBuildDate = async () => {
       justify-content: center;
       font-weight: 500;
       font-size: 22px;
-      background: linear-gradient(34.9789664967228deg, #54FFF5 0%, #5488FF 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      .try-button-text {
+        background: linear-gradient(34.9789664967228deg, #54FFF5 0%, #5488FF 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
     }
   }
 
