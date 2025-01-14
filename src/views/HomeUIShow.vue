@@ -7,7 +7,7 @@ import ModuleCard from '@/components/ModuleCard.vue'
 import {testLog, assertLog, emulationLog1, emulationLog2, analyzeLog} from '@/datas/logs'
 import {createWebSocketClient} from '@/utils/websocket'
 import TechProgress from '@/components/TechProgress.vue'
-import {assertCode, error, sim, specPost} from "@/apis/data";
+import {assertCode, error, repaire, sim, specPost} from "@/apis/data";
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
@@ -84,7 +84,7 @@ const setHighLight = async (options) => {
   if (!decorationsCollection) {
     return
   }
-  const decorations = errorCode.map(([startLineNumber, startColumn, endLineNumber, endColumn]) => ({
+  const decorations = errorCode.value.map(([startLineNumber, startColumn, endLineNumber, endColumn]) => ({
     range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
     options: {
       isWholeLine: true,
@@ -200,7 +200,6 @@ const analyze = async () => {
   try {
     const response = await error()
     if (response.code === 200) {
-      // errorCode = [[114, 1, 114, 1],[145,1,167,1]]
       errorCode.value = response.data?.error_code
     }
   } catch (error) {
@@ -210,10 +209,10 @@ const analyze = async () => {
 const repairButtonClicked = ref(false)
 const replacements = ref([])
 const repair = async () => {
+  debugger
   try {
-    const response = await error()
+    const response = await repaire()
     if (response.code === 200) {
-      // errorCode = [[114, 1, 114, 1],[145,1,167,1]]
       replacements.value = [
         {lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;"},
       ];
@@ -267,13 +266,11 @@ init()
 const wsClient = createWebSocketClient('ws://satan2333.icu:18765', [], {
   onOpen: () => console.log('Connection established.'),
   onMessage: (data) => {
-    console.log(data, 'data')
-
     try {
       const json = JSON.parse(data);
-      console.log(json, 'parsed data', json.type);
       if (json.type) {
         appendLog(json, json.type);
+        console.log(json, 'parsed data isEnd', json.isEnd)
         if (json.isEnd) {
           todoEnd(json.stage)
         }
@@ -316,19 +313,22 @@ const todoEnd = (stage) => {
     case 'test':
       assertFlag.value = false
       testFlag.value = true
+      functionCoverage.value = 100
       break
     case 'assert':
       deleteCodeLine(answerEditor.getModel().getLineCount())
       appendCodeLine()
       break
-    case 'emulation':
+    case 'sim':
       emulationFlag.value = true
       analyzeFlag.value = false
       break
-    case 'analyze':
+    case 'analyse':
+      repairFlag.value = false
+      analyzeFlag.value = true
       setHighLight()
       break
-    case 'repairCode':
+    case 'fix':
       repairFlag.value = true;
       emulationFlag.value = false;
       repairCode()
@@ -454,7 +454,7 @@ const todoEnd = (stage) => {
           </template>
           <template #default>
             <div class="console-output-section">
-              <div class="console-output" v-auto-scroll>
+              <div class="console-output result" v-auto-scroll>
                 <template v-if="analyzeAndResultLogMessages.length>0">
                   <div v-for="(log, index) in analyzeAndResultLogMessages" :key="index" :class="log.status">
                     {{ log.message }}
@@ -665,5 +665,8 @@ const todoEnd = (stage) => {
 .success {
   color: #04f808;
 }
-
+.console-output.result {
+  font-size: 14px;
+  color: #333333;
+}
 </style>

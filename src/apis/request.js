@@ -73,7 +73,7 @@ export const request = async params => {
   // 配置axios请求选项
   const axiosConfig = {
     headers: { 'Content-Type': 'application/json' },
-    timeout: 10000,
+    timeout: 100000,
     url: `${url}`,
     method: method.toLowerCase(),
     responseType: responseType.toLowerCase(),

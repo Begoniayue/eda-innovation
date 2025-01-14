@@ -62,7 +62,7 @@ export const error = async (data) => {
     throw error
   }
 }
-export const repair = async (data) => {
+export const repaire = async (data) => {
   try {
     // 准备请求参数
     const params = {
