@@ -26,11 +26,8 @@ The requirements are as follows:
 18. Ensure all stimuli are generated without using ellipses or shorthand that might obscure their meaning.
 19. Do not define any signals in the initial blocks.if you want to define signal,please do a global definition in front of the initial block
 20. Do not clock flip in the initial block
-
 Output
-
 To create testbench for the provided module \`ct_pmp_regs\`, we need to understand the functional requirements of each component in the design from the given specifications. We will write testbench to validate the expected behavior and conditions.
-
 Here is the testbench based on the given information.
 \`\`\`systemverilog
 \`timescale 1ns / 1ps
@@ -353,25 +350,8 @@ Test 4 Passed.
 Test 4 Passed.
 ===========Your Design Passed===========
 `
-export const analyzeLog=`[2025-01-09 15:15:41] {Main.py:399} INFO - Namespace(benchmark='Assignment4V', project='ct_pmp_regs', version='1')
-[2025-01-09 15:15:41] {preprocess.py:181} INFO - /home/AM/Bugloca/mixed_copy/strider/../benchmarks/Assignment4V/ct_pmp_regs/ct_pmp_regs_buggy1.v
-[2025-01-09 15:15:42] {preprocess.py:184} INFO - []
-[2025-01-09 15:15:42] {preprocess.py:185} INFO - []
-[2025-01-09 15:15:42] {Main.py:22} INFO - changes are 0
-[2025-01-09 15:15:42] {Repair.py:52} INFO - AST parsing.
-[2025-01-09 15:15:42] {Repair.py:54} INFO - {'filelist': ['/home/AM/Bugloca/mixed_copy/strider/../benchmarks/Assignment4V/ct_pmp_regs/ct_pmp_regs_buggy1.v'], 'include': [], 'define': []}
-[2025-01-09 15:15:42] {Repair.py:56} INFO - AST parsing done.
-[2025-01-09 15:15:42] {Repair.py:58} INFO - AST done.
-[2025-01-09 15:15:43] {Repair.py:67} INFO - Dataflow analyzing ct_pmp_regs.
-[2025-01-09 15:15:44] {AstAnalyzer.py:96} INFO - ['cp0_pmp_wdata', 'cpuclk', 'cpurst_b', 'pmp_cp0_data', 'pmp_csr_sel', 'pmp_csr_wen', 'pmpaddr0_value', 'pmpaddr1_value', 'pmpaddr2_value', 'pmpaddr3_value', 'pmpaddr4_value', 'pmpaddr5_value', 'pmpaddr6_value', 'pmpaddr7_value', 'pmpcfg0_value', 'pmpcfg2_value']
-[2025-01-09 15:15:44] {Main.py:66} INFO - /home/AM/Bugloca/mixed_copy/strider/../benchmarks/Assignment4V/ct_pmp_regs/ct_pmp_regs_buggy1.v
-[2025-01-09 15:15:53] {claude_api.py:79} INFO - {'module name': 'ct_pmp_regs', 'analysis': 'The default state of pmp5cfg_readable is incorrectly set to 1 during reset, which should be 0. It affects the value of pmpcfg0_value being read.', 'correct code': [('pmp5cfg_readable       <= 1\\'b1;', 'pmp5cfg_readable       <= 1\\'b0;')]}
-[2025-01-09 15:15:53] {preprocess.py:181} INFO - /home/AM/Bugloca/mixed_copy/strider/../benchmarks/Assignment4V/ct_pmp_regs/ct_pmp_regs_buggy1.v
-[2025-01-09 15:15:53] {preprocess.py:184} INFO - []
-[2025-01-09 15:15:53] {preprocess.py:185} INFO - []
-[2025-01-09 15:15:53] {Main.py:22} INFO - changes are 0
-[2025-01-09 15:15:55] {Repair.py:118} INFO - Dataflow analyzing ct_pmp_regs.
-[2025-01-09 15:15:56] {AstAnalyzer.py:96} INFO - ['cp0_pmp_wdata', 'cpuclk', 'cpurst_b', 'pmp_cp0_data', 'pmp_csr_sel', 'pmp_csr_wen', 'pmpaddr0_value', 'pmpaddr1_value', 'pmpaddr2_value', 'pmpaddr3_value', 'pmpaddr4_value', 'pmpaddr5_value', 'pmpaddr6_value', 'pmpaddr7_value', 'pmpcfg0_value', 'pmpcfg2_value']
-[2025-01-09 15:15:56] {Repair.py:141} INFO - mismatchSignals: []
-[2025-01-09 15:15:56] {Repair.py:160} INFO - Suspicious Lines: []
-[2025-01-09 15:15:56] {Main.py:182} INFO - Finish in mismatch with 1 iterations.`
+export const analyzeLog=`[
+  '[2025-01-09 15:15:42] {preprocess.py:184} INFO - []',
+  '[2025-01-09 15:15:42] {preprocess.py:185} INFO - []',
+  '[2025-01-09 15:15:42] {Main.py:22} INFO - changes are 0'
+]`

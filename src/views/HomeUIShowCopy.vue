@@ -99,7 +99,6 @@ const setHighLight = async (options) => {
       className: 'highlight-error-line'
     }
   }));
-
   decorationsCollection.set(decorations);
   analyzeFlag.value = true
   repairFlag.value = false

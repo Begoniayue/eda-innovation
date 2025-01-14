@@ -183,7 +183,7 @@ const assertCreate = async () => {
     return;
   }
 }
-const emulation = () => {
+const emulation = async () => {
   try {
     const response = await sim();
   } catch (error) {
@@ -195,7 +195,7 @@ const emulation = () => {
   // after fix button clear result log and append success info
   analyzeAndResultLogMessages.value = []
 }
-const analyze = () => {
+const analyze = async () => {
   // append analyzer log
   try {
     const response = await error()
