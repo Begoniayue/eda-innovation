@@ -32,6 +32,21 @@ export const assertCode = async (data) => {
     throw error
   }
 }
+export const sim = async (data) => {
+  try {
+    // 准备请求参数
+    const params = {
+      url: '/api/sim',
+      method: 'GET',
+      data,
+      requestType: 'string',
+      responseType: 'json',
+    }
+    return await request(params)
+  } catch (error) {
+    throw error
+  }
+}
 export const error = async (data) => {
   try {
     // 准备请求参数
@@ -47,11 +62,11 @@ export const error = async (data) => {
     throw error
   }
 }
-export const compair = async (data) => {
+export const repair = async (data) => {
   try {
     // 准备请求参数
     const params = {
-      url: '/api/compair',
+      url: '/api/repair',
       method: 'GET',
       data,
       requestType: 'string',
@@ -62,5 +77,3 @@ export const compair = async (data) => {
     throw error
   }
 }
-
-

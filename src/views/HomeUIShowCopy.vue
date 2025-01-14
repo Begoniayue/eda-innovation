@@ -7,7 +7,7 @@ import ModuleCard from '@/components/ModuleCard.vue'
 import {testLog, assertLog, emulationLog1, emulationLog2, analyzeLog} from '@/datas/logs'
 import {createWebSocketClient} from '@/utils/websocket'
 import TechProgress from '@/components/TechProgress.vue'
-import {assertCode, error, sim, specPost} from "@/apis/data";
+import {assertCode, error, specPost} from "@/apis/data";
 
 const ref_answerEditorContainer = ref(null)
 let answerEditor = null
@@ -79,10 +79,18 @@ const clearHighLight = () => {
   }
   decorationsCollection.clear()
 }
-const errorCode = ref(null)
 const setHighLight = async (options) => {
+  let errorCode
   if (!decorationsCollection) {
     return
+  }
+  try {
+    const response = await error()
+    if (response.code === 200) {
+      errorCode = [[114, 1, 114, 1],[145,1,167,1]]
+      // errorCode = response.data?.error_code
+    }
+  } catch (error) {
   }
   const decorations = errorCode.map(([startLineNumber, startColumn, endLineNumber, endColumn]) => ({
     range: new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn),
@@ -136,6 +144,7 @@ const startIncrement = () => {
 const logMessages = ref([])
 const analyzeAndResultLogMessages = ref([])
 const appendLog = (info, type) => {
+  console.log(info, type,'234')
   switch (type) {
     case 'log':
       logMessages.value.push(info.data)
@@ -184,48 +193,59 @@ const assertCreate = async () => {
   }
 }
 const emulation = () => {
-  try {
-    const response = await sim();
-  } catch (error) {
-    return;
-  }
   if (!repairButtonClicked.value) {
+    appendLog({
+      info: {
+        type: 'error',
+        message: emulationLog1
+      },
+      target: 'result'
+    })
+    setTimeout(() => {
+      appendLog({
+        info: {
+          type: 'error',
+          message: emulationLog2
+        },
+        target: 'result'
+      })
+    }, 2000)
+
     return
   }
   // after fix button clear result log and append success info
   analyzeAndResultLogMessages.value = []
+  appendLog({
+    info: {
+      type: 'success',
+      message: 'Success!'
+    },
+    target: 'result'
+  })
 }
 const analyze = () => {
   // append analyzer log
-  try {
-    const response = await error()
-    if (response.code === 200) {
-      // errorCode = [[114, 1, 114, 1],[145,1,167,1]]
-      errorCode.value = response.data?.error_code
-    }
-  } catch (error) {
-  }
+  appendLog({
+    info: {
+      type: 'normal',
+      message: analyzeLog
+    },
+    target: 'analyze'
+  })
 
 }
 const repairButtonClicked = ref(false)
-const replacements = ref([])
-const repair = async () => {
-  try {
-    const response = await error()
-    if (response.code === 200) {
-      // errorCode = [[114, 1, 114, 1],[145,1,167,1]]
-      replacements.value = [
-        {lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;"},
-      ];
-    }
-  } catch (error) {
-  }
-}
 const repairCode = () => {
   repairButtonClicked.value = true;
+
+  const replacements = [
+    {lineNumber: 113, text: "pmp5cfg_readable <= 11'b0;"},
+    {lineNumber: 125, text: "pmp5cfg_readable <= 11'b0;"},
+  ];
+
   const model = answerEditor.getModel(); // 获取模型
 
-  const edits =  replacements.value.map(({lineNumber, text}) => {
+  const edits = replacements.map(({lineNumber, text}) => {
     const range = new monaco.Range(lineNumber, 1, lineNumber, model.getLineMaxColumn(lineNumber));
     return {
       range,
@@ -331,7 +351,6 @@ const todoEnd = (stage) => {
     case 'repairCode':
       repairFlag.value = true;
       emulationFlag.value = false;
-      repairCode()
       break
   }
 
@@ -424,7 +443,7 @@ const todoEnd = (stage) => {
               <button class="button" @click="assertCreate" :disabled="assertFlag">断言生成</button>
               <button class="button" @click="emulation" :disabled="emulationFlag">仿真</button>
               <button class="button" @click="analyze" :disabled="analyzeFlag">分析</button>
-              <button class="button" @click="repair" :disabled="repairFlag">修复</button>
+              <button class="button" @click="repairCode" :disabled="repairFlag">修复</button>
             </div>
           </template>
           <template #default>
